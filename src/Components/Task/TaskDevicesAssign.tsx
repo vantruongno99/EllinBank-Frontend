@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react"
-import taskService from "../../Services/task.service"
-import { useParams, useNavigate } from "react-router-dom"
-import { DeviceInfo, TaskForm, TaskInfo } from "../../Ultils/type"
-import { Space, Input, Grid, Box, Title, NumberInput, Tabs, Table, Anchor, Text, Button, Menu, Group, ActionIcon, rem, Modal, createStyles, Checkbox } from "@mantine/core"
+import { useState } from "react"
+import { DeviceInfo, TaskForm } from "../../Ultils/type"
+import { Space, Box, Tooltip, Table, Text, Button, Group, ActionIcon, Modal, createStyles, Checkbox } from "@mantine/core"
 import { IconCirclePlus } from '@tabler/icons-react';
 import deviceService from "../../Services/device.service"
 
@@ -66,13 +64,19 @@ const TaskDevicesAssign = ({ task, handleAssign }: { task: TaskForm | undefined,
 
     return (<>
         <Box p={20} >
-            <ActionIcon color="blue" size="lg" radius="xl" variant="light" onClick={() => {
-                setOpened(true)
-                getAvailbleDevice()
-                setSelection([])
-            }}>
-                <IconCirclePlus />
-            </ActionIcon >
+            <Tooltip
+                label="Assign sensors to this task"
+                color="dark"
+            >
+                <ActionIcon color="blue" size="lg" radius="xl" variant="light" onClick={() => {
+                    setOpened(true)
+                    getAvailbleDevice()
+                    setSelection([])
+                }}>
+                    <IconCirclePlus />
+                </ActionIcon >
+            </Tooltip>
+
             <Modal title="Assign Sensors" opened={opened} onClose={() => setOpened(false)} withCloseButton={false} centered>
                 {rows.length !== 0 ? <Table fontSize="md" >
                     <thead>
@@ -83,7 +87,7 @@ const TaskDevicesAssign = ({ task, handleAssign }: { task: TaskForm | undefined,
                         </tr>
                     </thead>
                     <tbody>{rows}</tbody>
-                </Table> : <Text>
+                </Table> : <Text color="red">
                     No Device Avaiavle
                 </Text>
                 }

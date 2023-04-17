@@ -30,7 +30,7 @@ export default function AppShellDemo() {
       }
       footer={
         <Footer height={60} p="md">
-          Application footer
+          CTI 2023
         </Footer>
       }
       header={

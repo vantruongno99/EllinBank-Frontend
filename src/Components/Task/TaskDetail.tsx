@@ -1,9 +1,9 @@
-import  { useEffect } from "react"
+import { useEffect } from "react"
 import taskService from "../../Services/task.service"
 import { useNavigate } from "react-router-dom"
 import { EditTaskInput, TaskInfo, TaskForm } from "../../Ultils/type"
-import { Space, Input, Grid, Box, Title, NumberInput,  Text, Button, Menu, Group, ActionIcon, Badge } from "@mantine/core"
-import { IconCircleCheck, IconPlayerPlay, IconPlayerPause , IconTrash } from '@tabler/icons-react';
+import { Space, Input, Grid, Box, Title, NumberInput, Text, Button, Menu, Group, ActionIcon, Badge, Tooltip } from "@mantine/core"
+import { IconCircleCheck, IconPlayerPlay, IconPlayerPause, IconTrash } from '@tabler/icons-react';
 import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 
@@ -11,7 +11,7 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
     const navigate = useNavigate();
     const form = useForm<TaskForm>(
         {
-            initialValues : task,
+            initialValues: task,
             validate: {
                 name: (value) => (value.length < 5 ? 'Name must have at least 5 letters' : null),
                 logPeriod: (value) => (value < 0 ? 'You must be at least 18 to register' : null),
@@ -21,7 +21,7 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
     );
 
     useEffect(() => {
-        if(task) form.setValues(task)
+        if (task) form.setValues(task)
     }, [task])
 
 
@@ -135,9 +135,14 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
     return (
         <form onSubmit={form.onSubmit(handleUpdate)} >
             <Group position="right">
-                <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={() => handleDelete()}>
-                    <IconTrash />
-                </ActionIcon >
+                <Tooltip
+                    label="Delete this task"
+                    color="red"
+                >
+                    <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={() => handleDelete()}>
+                        <IconTrash />
+                    </ActionIcon >
+                </Tooltip>
             </Group>
             <Title order={3} color="blue">Information</Title>
             <Space h="xl" />
@@ -168,27 +173,34 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                 </Grid.Col>
                 <Grid.Col span={4}>
                     <Box maw={440} >
-                        <DateTimePicker
-                            placeholder="Start Date"
+                        <Input.Wrapper
+                            id="input-demo"
                             label="Start Date :"
-                            disabled
-                            {...form.getInputProps('startTime')}
-                            size="md"
+                        >
+                            <DateTimePicker
+                                placeholder="Start Date"
+                                disabled
+                                {...form.getInputProps('startTime')}
+                                size="md"
 
-                        />
+                            />
+                        </Input.Wrapper>
+
                     </Box>
                 </Grid.Col>
                 <Grid.Col span={4}>
                     <Box maw={440} >
-                        <DateTimePicker
-                            placeholder="End Date"
+                        <Input.Wrapper
+                            id="input-demo"
                             label="End Date :"
-                            {...form.getInputProps('endTime')}
-                            size="md"
-
-                        />
+                        >
+                            <DateTimePicker
+                                placeholder="End Date"
+                                {...form.getInputProps('endTime')}
+                                size="md"
+                            />
+                        </Input.Wrapper>
                     </Box>
-
                 </Grid.Col>
                 <Grid.Col span={4}>
                 </Grid.Col>
@@ -212,13 +224,17 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
             <Grid gutter="xl" >
                 <Grid.Col span={4}>
                     <Box maw={440} >
-                        <DateTimePicker
-                            placeholder="createdUTC"
-                            label="Created At"
-                            disabled
-                            {...form.getInputProps('createdUTC')}
-                            size="md"
-                        />
+                        <Input.Wrapper
+                            id="PUMP_SN"
+                            label="Created At :"                        >
+                            <DateTimePicker
+                                placeholder="createdUTC"
+                                disabled
+                                {...form.getInputProps('createdUTC')}
+                                size="md"
+                            />
+                        </Input.Wrapper>
+
                     </Box>
                 </Grid.Col>
                 <Grid.Col span={4}>
@@ -226,7 +242,7 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
 
                         <Input.Wrapper
                             id="input-demo"
-                            label="Created By"
+                            label="Created By :"
                         >
                             <Input disabled id="input-demo" size="md" {...form.getInputProps("createUser")} />
                         </Input.Wrapper>
@@ -237,12 +253,16 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                 </Grid.Col>
                 <Grid.Col span={4}>
                     <Box maw={440} >
-                        <DateTimePicker
-                            label="Completed At"
-                            {...form.getInputProps('completedUTC')}
-                            disabled
-                            size="md"
-                        />
+                        <Input.Wrapper
+                            id="PUMP_SN"
+                            label="Completed At :"                        >
+                            <DateTimePicker
+                                {...form.getInputProps('completedUTC')}
+                                disabled
+                                size="md"
+                            />
+                        </Input.Wrapper>
+
                     </Box>
                 </Grid.Col>
                 <Grid.Col span={4}>
@@ -250,7 +270,7 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
 
                         <Input.Wrapper
                             id="PUMP_SN"
-                            label="Completed By"
+                            label="Completed By :"
                         >
                             <Input disabled id="input-demo" size="md" {...form.getInputProps("completeUser")} />
                         </Input.Wrapper>
@@ -271,11 +291,13 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                     <Box maw={440} >
                         <Input.Wrapper
                             id="input-demo"
-                            label="Period"
+                            label="Period :"
                         >
                             <NumberInput
                                 id="input-demo"
                                 size="md" {...form.getInputProps("logPeriod")}
+                                max={5}
+                                min={0}
                             />
                         </Input.Wrapper>
                     </Box>

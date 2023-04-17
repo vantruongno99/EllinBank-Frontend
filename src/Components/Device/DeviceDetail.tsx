@@ -1,8 +1,8 @@
-import {  useEffect } from "react"
+import { useEffect } from "react"
 import deviceService from "../../Services/device.service"
-import {  useNavigate } from "react-router-dom"
-import {  DeviceForm} from "../../Ultils/type"
-import { Space, Input, Grid, Box, Title, Button, Group, ActionIcon } from "@mantine/core"
+import { useNavigate } from "react-router-dom"
+import { DeviceForm } from "../../Ultils/type"
+import { Space, Input, Grid, Box, Title, Button, Group, ActionIcon, Tooltip } from "@mantine/core"
 import {
     IconTrash
 } from '@tabler/icons-react';
@@ -53,16 +53,21 @@ const DeviceDetail = ({ device, getDevice }: { device: DeviceForm | null, getDev
     }
 
     useEffect(() => {
-        if(device) form.setValues(device)
+        if (device) form.setValues(device)
     }, [device])
 
 
     return (<>
         <form onSubmit={form.onSubmit(updateDevice)}>
             <Group position="right">
-                <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={() => deleteDevice()}>
-                    <IconTrash />
-                </ActionIcon >
+                <Tooltip
+                    label="Remove this Device"
+                    color="red"
+                >
+                    <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={() => deleteDevice()}>
+                        <IconTrash />
+                    </ActionIcon >
+                </Tooltip>
             </Group>
             <Title order={3} color="blue">Information</Title>
             <Space h="xl" />

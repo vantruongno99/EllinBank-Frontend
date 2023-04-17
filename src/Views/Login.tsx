@@ -17,14 +17,22 @@ import { LoginDetail } from '../Ultils/type';
 import authservice from '../Services/auth.service';
 import { useNavigate } from "react-router-dom";
 import { useError } from '../Hook';
-import '../App.css'
 
 
 const useStyles = createStyles((theme) => ({
+    wrapper: {
+        minHeight: rem(1000),
+        backgroundSize: 'cover',
+        backgroundImage:
+          'url(https://images.unsplash.com/photo-1484242857719-4b9144542727?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1280&q=80)',
+      },
 
       form: {
-        minHeight: rem(2000),
-        maxWidth: rem(1000),
+        borderRight: `${rem(1)} solid ${
+          theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
+        }`,
+        minHeight: rem(1000),
+        maxWidth: rem(500),
         paddingTop: rem(80),
     
         [theme.fn.smallerThan('sm')]: {
@@ -72,7 +80,7 @@ export function Login() {
 
 
     return (
-        <div>
+        <div className={classes.wrapper}>
             <form onSubmit={form.onSubmit(handleLogin)}>
                 <Paper className={classes.form} radius={0} p={40} >
                     <Title order={2} className={classes.title} ta="center" mt="md" mb={50}>
