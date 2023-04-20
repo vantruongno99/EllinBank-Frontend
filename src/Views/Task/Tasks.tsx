@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import taskService from "../../Services/task.service";
 import { TaskInfo } from "../../Ultils/type"
-import { Table, Anchor, Button, Group, Space } from '@mantine/core'
+import { Table, Anchor, Button, Group, Space , Tooltip ,Text} from '@mantine/core'
 import { useLocation, useNavigate } from 'react-router-dom';
 import moment from "moment";
 import {
@@ -25,6 +25,16 @@ const Devices = () => {
         }
     }
 
+    const statusColor = (status: string): string => {
+        switch (status) {
+            case "ONGOING": return "blue"
+            case "PAUSED": return "orange"
+            case "COMPLETED": return "green"
+            default:
+                return ""
+        }
+    }
+
     const location = useLocation();
 
     const rows = tasks.map((element) => (
@@ -38,11 +48,11 @@ const Devices = () => {
             <td> {moment(element.startTime).format('DD/MM/yyyy HH:mm')}</td>
             <td> <Group position="left">
                 {moment(element.endTime).format('DD/MM/yyyy HH:mm')} 
-            {(new Date(element.endTime) < new Date()) && <IconAlertTriangle color="orange"/>}
+            {(new Date(element.endTime) < new Date()) && <Tooltip label="Delayed"  color="orange"><IconAlertTriangle color="orange"/></Tooltip>}
             </Group>
             </td>
             <td>{element.createUser}</td>
-            <td>{element.status}</td>
+            <td><Text color={statusColor(element.status)}>{element.status}</Text></td>
         </tr>
     ))
 
