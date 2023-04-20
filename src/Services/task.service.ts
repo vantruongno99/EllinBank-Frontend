@@ -171,13 +171,30 @@ const unassignTask = async (taskId: number, deviceId: string) => {
 
         }
     }
-} 
+}
 
-const deleteTask = async (taskId : number): Promise<void> => {
+const deleteTask = async (taskId: number): Promise<void> => {
     try {
         await axios.delete(`${baseUrl}/${taskId}`,
             config
         )
+    }
+    catch (error: any | AxiosError) {
+        if (axios.isAxiosError(error)) {
+            AxiosHandleResponse(error)
+        } else {
+            console.log(error)
+
+        }
+    }
+}
+
+const getLogs = async (taskId: number): Promise<void> => {
+    try {
+        const res = await axios.get(`${baseUrl}/${taskId}/logs`,
+            config
+        )
+        return res.data
     }
     catch (error: any | AxiosError) {
         if (axios.isAxiosError(error)) {
@@ -199,7 +216,8 @@ const taskService = {
     resumeTask,
     updateTask,
     deleteTask,
-    unassignTask
+    unassignTask,
+    getLogs
 }
 
 export default taskService
