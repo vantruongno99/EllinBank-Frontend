@@ -1,6 +1,8 @@
 import axios, { AxiosError } from 'axios'
 import Cookies from 'js-cookie'
-import { LoginDetail } from '../Ultils/type'
+import { LoginDetail, ChangePasswordInput } from '../Ultils/type'
+import { AxiosHandleResponse } from '../Ultils/middleware'
+
 const baseUrl = ' http://localhost:3003/api/auth'
 
 
@@ -53,10 +55,30 @@ const tokenAuth = async () => {
     }
 }
 
+const changePassword = async (input: ChangePasswordInput) => {
+    try {
+        const res = await axios.post(`${baseUrl}/changePassword`, input,
+            {
+                headers: { Authorization: `bearer ${Cookies.get('token')}` }, // notice the Bearer before your token
+            }
+        )
+        return res.data
+    }
+    catch (error: any | AxiosError) {
+        if (axios.isAxiosError(error)) {
+            AxiosHandleResponse(error)
+        } else {
+            console.log(error)
+
+        }
+    }
+}
+
 const authservice = {
     loging,
     logout,
-    tokenAuth
+    tokenAuth,
+    changePassword
 }
 
 

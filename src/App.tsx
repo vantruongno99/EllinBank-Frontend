@@ -5,7 +5,7 @@ import { createBrowserRouter, RouterProvider, redirect } from "react-router-dom"
 import { innerRoutes, outerRoutes } from './Routes';
 import { Notifications } from '@mantine/notifications';
 import { Loader } from '@mantine/core';
-import Cookies from 'js-cookie'
+import { ModalsProvider } from '@mantine/modals';
 import authservice from './Services/auth.service';
 
 export default function App() {
@@ -61,10 +61,12 @@ export default function App() {
         },
       }}
     >
+    <ModalsProvider>
       <Notifications />
       <Suspense fallback={<Loader />}>
         <RouterProvider router={router} />
       </Suspense>
+      </ModalsProvider>
     </MantineProvider>
   );
 }

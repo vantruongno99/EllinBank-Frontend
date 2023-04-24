@@ -150,10 +150,10 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                 <Grid.Col span={4}>
                     <Box maw={440} >
                         <Input.Wrapper
-                            id="input-demo"
+                            
                             label="ID :"
                         >
-                            <Input id="input-demo"  {...form.getInputProps('id')} size="md" disabled />
+                            <Input   {...form.getInputProps('id')} size="md" disabled />
                         </Input.Wrapper>
                     </Box>
                 </Grid.Col>
@@ -161,10 +161,10 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                     <Box maw={440} >
 
                         <Input.Wrapper
-                            id="input-demo"
+                            
                             label="Name :"
                         >
-                            <Input id="input-demo" {...form.getInputProps('name')} size="md" />
+                            <Input  {...form.getInputProps('name')} size="md" />
                         </Input.Wrapper>
                     </Box>
 
@@ -174,7 +174,7 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                 <Grid.Col span={4}>
                     <Box maw={440} >
                         <Input.Wrapper
-                            id="input-demo"
+                            
                             label="Start Date :"
                         >
                             <DateTimePicker
@@ -191,7 +191,7 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                 <Grid.Col span={4}>
                     <Box maw={440} >
                         <Input.Wrapper
-                            id="input-demo"
+                            
                             label="End Date :"
                         >
                             <DateTimePicker
@@ -241,10 +241,10 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                     <Box maw={440} >
 
                         <Input.Wrapper
-                            id="input-demo"
+                            
                             label="Created By :"
                         >
-                            <Input disabled id="input-demo" size="md" {...form.getInputProps("createUser")} />
+                            <Input disabled  size="md" {...form.getInputProps("createUser")} />
                         </Input.Wrapper>
                     </Box>
 
@@ -272,7 +272,7 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                             id="PUMP_SN"
                             label="Completed By :"
                         >
-                            <Input disabled id="input-demo" size="md" {...form.getInputProps("completeUser")} />
+                            <Input disabled  size="md" {...form.getInputProps("completeUser")} />
                         </Input.Wrapper>
                     </Box>
 
@@ -290,11 +290,11 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                 <Grid.Col span={4}>
                     <Box maw={440} >
                         <Input.Wrapper
-                            id="input-demo"
+                            
                             label="Period :"
                         >
                             <NumberInput
-                                id="input-demo"
+                                
                                 size="md" {...form.getInputProps("logPeriod")}
                                 max={5}
                                 min={0}

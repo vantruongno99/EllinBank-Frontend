@@ -69,16 +69,16 @@ const DeviceDetail = ({ device, getDevice }: { device: DeviceForm | null, getDev
                     </ActionIcon >
                 </Tooltip>
             </Group>
-            <Title order={3} color="blue">Information</Title>
+            <Title order={4} color="blue">INFORMATION</Title>
             <Space h="xl" />
             <Grid gutter='md' >
                 <Grid.Col span={4}>
                     <Box maw={440} >
                         <Input.Wrapper
-                            id="input-demo"
+                            
                             label="ID :"
                         >
-                            <Input id="input-demo"  {...form.getInputProps('id')} size="md" disabled />
+                            <Input   {...form.getInputProps('id')} size="md" disabled />
                         </Input.Wrapper>
                     </Box>
                 </Grid.Col>
@@ -86,10 +86,10 @@ const DeviceDetail = ({ device, getDevice }: { device: DeviceForm | null, getDev
                     <Box maw={440} >
 
                         <Input.Wrapper
-                            id="input-demo"
+                            
                             label="Name :"
                         >
-                            <Input id="input-demo" {...form.getInputProps('name')} size="md" />
+                            <Input  {...form.getInputProps('name')} size="md" />
                         </Input.Wrapper>
                     </Box>
 
@@ -100,10 +100,10 @@ const DeviceDetail = ({ device, getDevice }: { device: DeviceForm | null, getDev
                 <Grid.Col span={4}>
                     <Box maw={440} >
                         <Input.Wrapper
-                            id="input-demo"
+                            
                             label="Last Update :"
                         >
-                            <Input id="input-demo" {...form.getInputProps('updateUTC')} disabled size="md" />
+                            <Input  {...form.getInputProps('updateUTC')} disabled size="md" />
                         </Input.Wrapper>
                     </Box>
 
@@ -115,17 +115,17 @@ const DeviceDetail = ({ device, getDevice }: { device: DeviceForm | null, getDev
             <Space h="xl" />
 
 
-            <Title order={3} color="blue">Sensor Detail</Title>
+            <Title order={4} color="blue">DETAILS</Title>
             <Space h="xl" />
 
             <Grid gutter='md' >
                 <Grid.Col span={4}>
                     <Box maw={440} >
                         <Input.Wrapper
-                            id="input-demo"
+                            
                             label="CH4 SN :"
                         >
-                            <Input id="input-demo" size="md" {...form.getInputProps("CH4_SN")} />
+                            <Input  size="md" {...form.getInputProps("CH4_SN")} />
                         </Input.Wrapper>
                     </Box>
                 </Grid.Col>
@@ -133,10 +133,10 @@ const DeviceDetail = ({ device, getDevice }: { device: DeviceForm | null, getDev
                     <Box maw={440} >
 
                         <Input.Wrapper
-                            id="input-demo"
+                            
                             label="O2 SN :"
                         >
-                            <Input id="input-demo" size="md" {...form.getInputProps("O2_SN")} />
+                            <Input  size="md" {...form.getInputProps("O2_SN")} />
                         </Input.Wrapper>
                     </Box>
 
@@ -149,7 +149,7 @@ const DeviceDetail = ({ device, getDevice }: { device: DeviceForm | null, getDev
                             id="CO2_SN"
                             label="CO2 SN :"
                         >
-                            <Input id="input-demo" size="md" {...form.getInputProps("CO2_SN")} />
+                            <Input  size="md" {...form.getInputProps("CO2_SN")} />
                         </Input.Wrapper>
                     </Box>
                 </Grid.Col>
@@ -160,7 +160,7 @@ const DeviceDetail = ({ device, getDevice }: { device: DeviceForm | null, getDev
                             id="PUMP_SN"
                             label="PUMP SN :"
                         >
-                            <Input id="input-demo" size="md" {...form.getInputProps("PUMP_SN")} />
+                            <Input  size="md" {...form.getInputProps("PUMP_SN")} />
                         </Input.Wrapper>
                     </Box>
 

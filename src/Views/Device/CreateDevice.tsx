@@ -1,6 +1,6 @@
 import React from "react"
 import { useForm } from '@mantine/form';
-import { NumberInput, TextInput, Button, Box, Space } from '@mantine/core';
+import { NumberInput, TextInput, Button, Box, Space , Input } from '@mantine/core';
 import deviceService from "../../Services/device.service";
 import { DeviceInput } from "../../Ultils/type";
 import { useError } from "../../Hook";
@@ -41,12 +41,23 @@ const CreateDevice = () => {
         <>
             <Box maw={320}>
                 <form onSubmit={form.onSubmit(createDevice)}>
-                    <TextInput label="ID" placeholder="ID" {...form.getInputProps('id')} />
+                    <Input.Wrapper
+                        
+                        label="ID :" placeholder="ID"
+                    >
+                        <TextInput  {...form.getInputProps('id')} />
+                    </Input.Wrapper>
                     <Space h="xs" />
-                    <TextInput label="Name" placeholder="Name" {...form.getInputProps('name')} />
+                    <Input.Wrapper
+                        
+                        label="Name :" placeholder="Name"
+                    >
+                    <TextInput {...form.getInputProps('name')} />
+                    </Input.Wrapper>
+
                     <Space h="md" />
                     <Button type="submit" mt="sm">
-                        Submit
+                        Save
                     </Button>
                     <Space h="md" />
                     {errorMessage.value}

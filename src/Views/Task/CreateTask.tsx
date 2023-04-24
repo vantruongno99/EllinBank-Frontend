@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { useForm } from '@mantine/form';
-import { NumberInput, TextInput, Button, Box, Space, Grid, createStyles, Table, Checkbox, Group, rem, Title } from '@mantine/core';
+import { NumberInput, TextInput, Button, Box, Space, Grid, createStyles, Table, Checkbox, Group, rem, Title, Input } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import taskService from "../../Services/task.service";
 import deviceService from "../../Services/device.service";
@@ -44,12 +44,12 @@ const CreateTask = () => {
             if (res) {
                 selection.length !== 0 && selection.forEach(async (a) => {
                     await taskService.assignTask(res.id, a);
-                
+
                 })
-                
+
                 navigate(`/task/${res.id}`)
             }
-            
+
         }
 
         catch (e) {
@@ -108,21 +108,27 @@ const CreateTask = () => {
                     <Space h="xl" />
                     <Box maw={320}>
                         <form onSubmit={form.onSubmit(newTask)}>
-                            <TextInput label="Name" placeholder="Name" {...form.getInputProps('name')} />
+                            <Input.Wrapper
+                                label="Name" placeholder="Name"
+                            >
+                                <TextInput  {...form.getInputProps('name')} />
+                            </Input.Wrapper>
                             <Space h="xs" />
-                            <NumberInput
-                                mt="sm"
-                                label="Log Period"
-                                placeholder="Log Period"
-                                min={0}
-                                max={30}
-                                {...form.getInputProps('logPeriod')}
-                            />
+
+                            <Input.Wrapper
+                                label="Log Period :"
+                                placeholder="Log Period">
+                                <NumberInput
+                                    min={0}
+                                    max={30}
+                                    {...form.getInputProps('logPeriod')}
+                                />
+                            </Input.Wrapper>
                             <Space h="xs" />
 
                             <DateTimePicker
                                 placeholder="Start Date"
-                                label="Start Date"
+                                label="Start Date "
                                 withAsterisk
                                 {...form.getInputProps('startTime')}
                             />

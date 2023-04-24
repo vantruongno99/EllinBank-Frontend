@@ -70,11 +70,11 @@ const DeviceSensors = ({ device }: { device: DeviceForm | null }) => {
             <Grid.Col span={4}>
                 <form onSubmit={form3.onSubmit(readSensor)}>
                     <Space h="md" />
-                    <Title order={4}>Read</Title>
+                    <Title color="blue" order={4}>READ</Title>
                     <Space h="md" />
                     <Box maw={440} >
                         <Input.Wrapper
-                            id="input-demo"
+                            
                             label="Sensor Type:"
                         >
                             <Select data={[
@@ -85,11 +85,11 @@ const DeviceSensors = ({ device }: { device: DeviceForm | null }) => {
                                 { value: 'RH', label: 'RH' },
                                 { value: 'BAR', label: 'BAR' },
                             ]}
-                                id="input-demo" {...form3.getInputProps('sensorType')} size="md" />
+                                 {...form3.getInputProps('sensorType')} size="md" />
                         </Input.Wrapper>
                     </Box>
                     <Space h="xl" />
-                    <Button type="submit">Get </Button>
+                    <Button type="submit">Get</Button>
                 </form>
             </Grid.Col>
             <Grid.Col span={4}>
@@ -104,18 +104,18 @@ const DeviceSensors = ({ device }: { device: DeviceForm | null }) => {
             <Grid.Col span={4}>
                 <form onSubmit={form2.onSubmit(calibrate)}>
                     <Space h="md" />
-                    <Title order={4}>Calibrate</Title>
+                    <Title order={4} color="blue">CALIBRATE</Title>
                     <Space h="md" />
                     <Box maw={440} >
                         <Input.Wrapper
-                            id="input-demo"
+                            
                             label="Gas Type :"
                         >
                             <Select data={[
                                 { value: 'CO2', label: 'CO2' },
                                 { value: 'CH4', label: 'CH4' },
                             ]}
-                                id="input-demo" {...form2.getInputProps('gasType')} size="md" />
+                                 {...form2.getInputProps('gasType')} size="md" />
                         </Input.Wrapper>
                     </Box>
                     <Space h="xl" />
@@ -123,35 +123,35 @@ const DeviceSensors = ({ device }: { device: DeviceForm | null }) => {
                     <Box maw={440} >
 
                         <Input.Wrapper
-                            id="input-demo"
+                            
                             label="Cal Type :"
                         >
                             <Select data={[
                                 { value: 'ZERO', label: 'ZERO' },
                                 { value: 'SPAN', label: 'SPAN' },
                             ]}
-                                id="input-demo" {...form2.getInputProps('calType')} size="md" />
+                                 {...form2.getInputProps('calType')} size="md" />
                         </Input.Wrapper>
                     </Box>
                     <Space h="xl" />
                     <Box maw={440} >
 
                         <Input.Wrapper
-                            id="input-demo"
+                            
                             label="Cal Value :"
                         >
                             <NumberInput
                                 precision={2}
                                 step={0.05}
                                 min={0}
-                                id="input-demo"
+                                
                                 {...form2.getInputProps('calValue')}
                                 size="md" />
                         </Input.Wrapper>
                     </Box>
                     <Space h="xl" />
 
-                    <Button type="submit">Calibrate </Button>
+                    <Button type="submit">CALIBRATE</Button>
                 </form>
             </Grid.Col>
             <Grid.Col span={4}>

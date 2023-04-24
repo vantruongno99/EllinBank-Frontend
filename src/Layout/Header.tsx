@@ -8,9 +8,10 @@ import {
 } from '@mantine/core';
 import { MantineLogo } from '@mantine/ds';
 import {
-    IconLogout,
+    IconLogout, IconAddressBook
 } from '@tabler/icons-react';
 import authservice from '../Services/auth.service';
+import Cookies from 'js-cookie';
 
 
 const useStyles = createStyles((theme) => ({
@@ -115,7 +116,14 @@ export default function CustomHeader() {
                             </UnstyledButton>
                         </Menu.Target>
                         <Menu.Dropdown>
-                            <Menu.Item onClick={() =>authservice.logout()} color="red" icon={<IconLogout size="1rem" stroke={1.5} />}>
+                            <Menu.Item
+                                component="a"
+                                href={`/profile/${Cookies.get('username')}`}
+                                color="blue"
+                                icon={<IconAddressBook size="1rem" stroke={1.5} />}>
+                                Profile
+                            </Menu.Item>
+                            <Menu.Item onClick={() => authservice.logout()} color="red" icon={<IconLogout size="1rem" stroke={1.5} />}>
                                 Log out
                             </Menu.Item>
                         </Menu.Dropdown>

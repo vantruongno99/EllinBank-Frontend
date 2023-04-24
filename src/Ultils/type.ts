@@ -90,4 +90,15 @@ export interface CalibrateSensorForm {
     calValue: number
 }
 
+export interface ChangePasswordInput {
+    username : string,
+    password : string , 
+    newPassword : string
+}
+
+export interface ChangePasswordForm {
+    password : string , 
+    newPassword : string
+}
+
 
