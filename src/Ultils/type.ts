@@ -8,12 +8,7 @@ export type DeviceInput = {
     id: string,
 }
 
-export interface DeviceInfo extends DeviceInput {
-    CH4_SN: string | null
-    O2_SN: string | null
-    CO2_SN: string | null
-    PUMP_SN: string | null
-    updateUTC: string,
+export interface DeviceInfo extends DeviceForm {
     Task: { Task: TaskInfo }[]
 }
 
@@ -23,6 +18,8 @@ export interface DeviceForm extends DeviceInput {
     CO2_SN: string | null
     PUMP_SN: string | null
     updateUTC: string,
+    status : string,
+    assigned : boolean
 } 
 
 

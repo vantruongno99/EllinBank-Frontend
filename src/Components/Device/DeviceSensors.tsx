@@ -2,10 +2,8 @@ import deviceService from "../../Services/device.service"
 import { CalibrateSensorForm, DeviceForm } from "../../Ultils/type"
 import { Space, Input, Grid, Box, Title, Button , NumberInput, Select ,Text} from "@mantine/core"
 import { useForm } from '@mantine/form';
-import { useError } from "../../Hook";
-
+import { showErorNotification } from "../../Ultils/notification";
 const DeviceSensors = ({ device }: { device: DeviceForm | null }) => {
-    const errorMessage = useError()
     const form2 = useForm<CalibrateSensorForm>({
         initialValues: {
             calType: "",
@@ -36,10 +34,10 @@ const DeviceSensors = ({ device }: { device: DeviceForm | null }) => {
             }
             catch (e) {
                 if (e instanceof Error) {
-                    errorMessage.set(e.message)
+                    showErorNotification(e.message)
                 }
                 else {
-                    errorMessage.set("Unknown Error")
+                    showErorNotification("Unknown Error")
                 }
             }
         }
@@ -54,10 +52,10 @@ const DeviceSensors = ({ device }: { device: DeviceForm | null }) => {
             }
             catch (e) {
                 if (e instanceof Error) {
-                    errorMessage.set(e.message)
+                    showErorNotification(e.message)
                 }
                 else {
-                    errorMessage.set("Unknown Error")
+                    showErorNotification("Unknown Error")
                 }
             }
         }
@@ -162,12 +160,6 @@ const DeviceSensors = ({ device }: { device: DeviceForm | null }) => {
         <Space h="xl" />
         <Space h="xl" />
         <Space h="xl" />
-
-
-       <Text color='red'>{errorMessage.value}</Text> 
-
-
-
     </>)
 }
 

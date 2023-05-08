@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react"
 import deviceService from "../../Services/device.service"
 import { DeviceInfo } from "../../Ultils/type"
-import { Table, Anchor, Button, Group , Space} from '@mantine/core'
+import { Table, Anchor, Button, Group , Space ,Text} from '@mantine/core'
 import { useLocation ,useNavigate} from 'react-router-dom';
+import { deviceStatusColor } from "../../Ultils/colors"
+
 
 const Devices = () => {
     const [devices, setDevices] = useState<DeviceInfo[]>([])
@@ -25,6 +27,8 @@ const Devices = () => {
     const location = useLocation();
 
 
+
+
     const rows = devices.map((element) => (
         <tr key={element.id}>
             <td> <Anchor href={`${location.pathname}/${element.id}`} target="_blank">
@@ -35,6 +39,8 @@ const Devices = () => {
             <td>{element.O2_SN}</td>
             <td>{element.CO2_SN}</td>
             <td>{element.PUMP_SN}</td>
+            <td><Text color={deviceStatusColor(element.status)}>{element.status}</Text></td>
+
         </tr>
     ))
 
@@ -62,7 +68,7 @@ const Devices = () => {
                         <th>O2_SN</th>
                         <th>CO2_SN</th>
                         <th>PUMP_SN</th>
-
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>{rows}</tbody>

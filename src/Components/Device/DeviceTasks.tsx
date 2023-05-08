@@ -1,7 +1,9 @@
 
 import {  TaskInfo } from "../../Ultils/type"
-import { Box, Table, Anchor } from "@mantine/core"
+import { Box, Table, Anchor,Text } from "@mantine/core"
 import moment from "moment"
+import { taskStatusColor } from "../../Ultils/colors"
+
 
 const DeviceTasks = ({ tasks }: { tasks: TaskInfo[] }) => {
 
@@ -14,7 +16,7 @@ const DeviceTasks = ({ tasks }: { tasks: TaskInfo[] }) => {
             <td> {moment(element.startTime).format('DD/MM/yyyy HH:mm')}</td>
             <td>{moment(element.endTime).format('DD/MM/yyyy HH:mm')}</td>
             <td>{element.createUser}</td>
-            <td>{element.status}</td>
+            <td><Text color={taskStatusColor(element.status)}>{element.status}</Text></td>
         </tr>
     ))
 

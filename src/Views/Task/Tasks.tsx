@@ -7,6 +7,8 @@ import moment from "moment";
 import {
     IconAlertTriangle
 } from '@tabler/icons-react';
+import { taskStatusColor } from "../../Ultils/colors"
+
 const Devices = () => {
     const [tasks, setTasks] = useState<TaskInfo[]>([])
     const navigate = useNavigate()
@@ -25,15 +27,7 @@ const Devices = () => {
         }
     }
 
-    const statusColor = (status: string): string => {
-        switch (status) {
-            case "ONGOING": return "blue"
-            case "PAUSED": return "orange"
-            case "COMPLETED": return "green"
-            default:
-                return ""
-        }
-    }
+ 
 
     const location = useLocation();
 
@@ -52,9 +46,12 @@ const Devices = () => {
             </Group>
             </td>
             <td>{element.createUser}</td>
-            <td><Text color={statusColor(element.status)}>{element.status}</Text></td>
+            <td><Text color={taskStatusColor(element.status)}>{element.status}</Text></td>
         </tr>
     ))
+
+
+    
 
 
     useEffect(() => {

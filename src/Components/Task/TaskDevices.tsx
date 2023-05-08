@@ -5,6 +5,9 @@ import { DeviceInfo, TaskForm, TaskInfo } from "../../Ultils/type"
 import { Space, Input, Grid, Box, Title, NumberInput, Tabs, Table, Anchor, Text, Button, Menu, Group, ActionIcon, rem, Modal, createStyles, Checkbox } from "@mantine/core"
 import TaskDevicesAssign from "./TaskDevicesAssign"
 import { IconX } from '@tabler/icons-react';
+import { deviceStatusColor } from "../../Ultils/colors"
+import { showErorNotification } from "../../Ultils/notification"
+
 
 const useStyles = createStyles((theme) => ({
     rowSelected: {
@@ -32,7 +35,12 @@ const TaskDevices = ({ devices, task, getTask }: { devices: DeviceInfo[], task: 
 
             }
             catch (e) {
-                console.log(e)
+                if (e instanceof Error) {
+                    showErorNotification(e.message)
+                }
+                else {
+                    showErorNotification("Unknown Error")
+                }
             }
         }
     }
@@ -47,15 +55,23 @@ const TaskDevices = ({ devices, task, getTask }: { devices: DeviceInfo[], task: 
 
             }
             catch (e) {
-                console.log(e)
+                if (e instanceof Error) {
+                    showErorNotification(e.message)
+                }
+                else {
+                    showErorNotification("Unknown Error")
+                }
             }
         }
     }
+
 
     const toggleRow = (id: string) =>
         setSelection((current) =>
             current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
         );
+
+ 
 
     const rows = devices.map((element: any) => {
         const selected = selection.includes(element.id);
@@ -75,10 +91,53 @@ const TaskDevices = ({ devices, task, getTask }: { devices: DeviceInfo[], task: 
                     {element.id}
                 </Anchor></td>
                 <td>{element.name}</td>
+                <td><Text color={deviceStatusColor(element.status)}>{element.status}</Text></td>
+
             </tr>
         )
     }
     )
+
+    const completedRows = devices.map((element: any) => {
+        const selected = selection.includes(element.id);
+
+        return (
+            <tr key={element.id} className={cx({ [classes.rowSelected]: selected })}>
+
+                <td> <Anchor href={`/device/${element.id}`} target="_blank">
+                    {element.id}
+                </Anchor></td>
+                <td>{element.name}</td>
+                <td><Text color={deviceStatusColor(element.status)}>{element.status}</Text></td>
+
+            </tr>
+        )
+    }
+    )
+
+    if(task?.status === "COMPLETED"){
+        return (<>
+            <Box p={20} >
+                <Group position="apart">
+                    <Text fz="lg">Assigned Devices :</Text>    
+                </Group>
+                <Space h="xl" />
+                <Table fontSize="md">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+    
+                        </tr>
+                    </thead>
+                    <tbody>{completedRows}</tbody>
+                </Table>
+                <Space h="xl" />
+            </Box>
+    
+        </>)
+    }
 
     return (<>
         <Box p={20} >
@@ -95,6 +154,7 @@ const TaskDevices = ({ devices, task, getTask }: { devices: DeviceInfo[], task: 
                         </th>
                         <th>ID</th>
                         <th>Name</th>
+                        <th>Status</th>
 
                     </tr>
                 </thead>

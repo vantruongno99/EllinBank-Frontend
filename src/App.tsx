@@ -61,12 +61,10 @@ export default function App() {
         },
       }}
     >
-    <ModalsProvider>
-      <Notifications />
+      <Notifications position="top-right"/>
       <Suspense fallback={<Loader />}>
         <RouterProvider router={router} />
       </Suspense>
-      </ModalsProvider>
     </MantineProvider>
   );
 }

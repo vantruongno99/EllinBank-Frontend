@@ -6,6 +6,8 @@ import { Space, Input, Grid, Box, Title, NumberInput, Text, Button, Menu, Group,
 import { IconCircleCheck, IconPlayerPlay, IconPlayerPause, IconTrash } from '@tabler/icons-react';
 import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
+import { taskStatusColor } from "../../Ultils/colors"
+import { showErorNotification, showSuccessNotification } from "../../Ultils/notification"
 
 const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: TaskForm | undefined }) => {
     const navigate = useNavigate();
@@ -38,10 +40,15 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                 }
                 const res: TaskInfo | undefined = await taskService.updateTask(input)
                 await getTask()
-
+                showSuccessNotification(`Task ${form.values.name} has been updated`)
             }
             catch (e) {
-                console.log(e)
+                if (e instanceof Error) {
+                    showErorNotification(e.message)
+                }
+                else {
+                    showErorNotification("Unknown Error")
+                }
             }
         }
     }
@@ -55,7 +62,12 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                 getTask()
             }
             catch (e) {
-                console.log(e)
+                if (e instanceof Error) {
+                    showErorNotification(e.message)
+                }
+                else {
+                    showErorNotification("Unknown Error")
+                }
             }
         }
     }
@@ -68,7 +80,12 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                 navigate('/task')
             }
             catch (e) {
-                console.log(e)
+                if (e instanceof Error) {
+                    showErorNotification(e.message)
+                }
+                else {
+                    showErorNotification("Unknown Error")
+                }
             }
         }
     }
@@ -81,7 +98,12 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                 getTask()
             }
             catch (e) {
-                console.log(e)
+                if (e instanceof Error) {
+                    showErorNotification(e.message)
+                }
+                else {
+                    showErorNotification("Unknown Error")
+                }
             }
         }
     }
@@ -93,20 +115,17 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                 getTask()
             }
             catch (e) {
-                console.log(e)
+                if (e instanceof Error) {
+                    showErorNotification(e.message)
+                }
+                else {
+                    showErorNotification("Unknown Error")
+                }
             }
         }
     }
 
-    const statusColor = (status: string): string => {
-        switch (status) {
-            case "ONGOING": return "blue"
-            case "PAUSED": return "orange"
-            case "COMPLETED": return "green"
-            default:
-                return ""
-        }
-    }
+
 
     const menuOptions = () => {
 
@@ -144,13 +163,13 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                     </ActionIcon >
                 </Tooltip>
             </Group>
-            <Title order={3} color="blue">Information</Title>
+            <Title order={3} color="blue">INFORMATION</Title>
             <Space h="xl" />
             <Grid gutter="xl" >
                 <Grid.Col span={4}>
                     <Box maw={440} >
                         <Input.Wrapper
-                            
+
                             label="ID :"
                         >
                             <Input   {...form.getInputProps('id')} size="md" disabled />
@@ -161,10 +180,10 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                     <Box maw={440} >
 
                         <Input.Wrapper
-                            
+
                             label="Name :"
                         >
-                            <Input  {...form.getInputProps('name')} size="md" />
+                            <Input  {...form.getInputProps('name')} size="md" disabled={form.values.status === "COMPLETED"} />
                         </Input.Wrapper>
                     </Box>
 
@@ -174,7 +193,7 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                 <Grid.Col span={4}>
                     <Box maw={440} >
                         <Input.Wrapper
-                            
+
                             label="Start Date :"
                         >
                             <DateTimePicker
@@ -191,13 +210,14 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                 <Grid.Col span={4}>
                     <Box maw={440} >
                         <Input.Wrapper
-                            
+
                             label="End Date :"
                         >
                             <DateTimePicker
                                 placeholder="End Date"
                                 {...form.getInputProps('endTime')}
                                 size="md"
+                                disabled={form.values.status === "COMPLETED"}
                             />
                         </Input.Wrapper>
                     </Box>
@@ -209,7 +229,7 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                         <Text fw={500}>Status : </Text>
                         <Menu trigger="hover" position="right-start" openDelay={100} closeDelay={400}>
                             <Menu.Target>
-                                <Badge size="lg" variant="dot" color={statusColor(form.values.status)}>{form.values.status}</Badge >
+                                <Badge size="lg" variant="dot" color={taskStatusColor(form.values.status)}>{form.values.status}</Badge >
                             </Menu.Target>
                             {menuOptions()}
                         </Menu>
@@ -218,7 +238,7 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
             </Grid>
             <Space h="xl" />
             <Space h="xl" />
-            <Title order={3} color="blue">Detail</Title>
+            <Title order={3} color="blue">DETAIL</Title>
             <Space h="xl" />
 
             <Grid gutter="xl" >
@@ -241,10 +261,10 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                     <Box maw={440} >
 
                         <Input.Wrapper
-                            
+
                             label="Created By :"
                         >
-                            <Input disabled  size="md" {...form.getInputProps("createUser")} />
+                            <Input disabled size="md" {...form.getInputProps("createUser")} />
                         </Input.Wrapper>
                     </Box>
 
@@ -272,7 +292,7 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                             id="PUMP_SN"
                             label="Completed By :"
                         >
-                            <Input disabled  size="md" {...form.getInputProps("completeUser")} />
+                            <Input disabled size="md" {...form.getInputProps("completeUser")} />
                         </Input.Wrapper>
                     </Box>
 
@@ -283,21 +303,22 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
             </Grid>
             <Space h="xl" />
             <Space h="xl" />
-            <Title order={3} color="blue">Profile</Title>
+            <Title order={3} color="blue">PROFILE</Title>
             <Space h="xl" />
 
             <Grid gutter='md' >
                 <Grid.Col span={4}>
                     <Box maw={440} >
                         <Input.Wrapper
-                            
+
                             label="Period :"
                         >
                             <NumberInput
-                                
+
                                 size="md" {...form.getInputProps("logPeriod")}
                                 max={5}
                                 min={0}
+                                disabled={form.values.status === "COMPLETED"}
                             />
                         </Input.Wrapper>
                     </Box>
@@ -305,9 +326,11 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
 
             </Grid>
             <Space h="xl" />
-            <Button type="submit" mt="sm">
-                Save Changes
-            </Button>
+            {form.values.status !== "COMPLETED" &&
+                <Button type="submit" mt="sm">
+                    Save Changes
+                </Button>
+            }
         </form>)
 }
 

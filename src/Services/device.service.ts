@@ -8,8 +8,6 @@ const config = {
     headers: { Authorization: `bearer ${Cookies.get('token')}` }, // notice the Bearer before your token
 }
 
-
-
 const getAllDevices = async (): Promise<DeviceInfo[] | undefined> => {
     try {
         const res = await axios.get(`${baseUrl}`,
@@ -100,6 +98,44 @@ const editDevice = async (editDevice: EditDeviceInput): Promise<DeviceInfo | und
     }
 }
 
+const pauseDevice = async (id: string): Promise<DeviceInfo | undefined> => {
+    try {
+        const res = await axios.put(`${baseUrl}/${id}/pause`,
+            {editDevice},
+            config
+        )
+
+        return res.data
+    }
+    catch (error: any | AxiosError) {
+        if (axios.isAxiosError(error)) {
+            AxiosHandleResponse(error)
+        } else {
+            console.log(error)
+
+        }
+    }
+}
+
+const resumeDevice = async (id: string): Promise<DeviceInfo | undefined> => {
+    try {
+        const res = await axios.put(`${baseUrl}/${id}/resume`,
+            {},
+            config
+        )
+
+        return res.data
+    }
+    catch (error: any | AxiosError) {
+        if (axios.isAxiosError(error)) {
+            AxiosHandleResponse(error)
+        } else {
+            console.log(error)
+
+        }
+    }
+}
+
 const calibrateSensor = async (deviceId: string ,input: CalibrateSensorForm) => {
     try {
         const res = await axios.post(`${baseUrl}/${deviceId}/calibrate`,
@@ -161,7 +197,9 @@ const deviceService = {
     editDevice,
     calibrateSensor,
     readSensor,
-    deleteDevice
+    deleteDevice,
+    pauseDevice,
+    resumeDevice
 }
 
 export default deviceService

@@ -3,7 +3,7 @@ import taskService from "../../Services/task.service"
 import { useParams } from "react-router-dom"
 import { DeviceInfo, TaskForm, TaskInfo } from "../../Ultils/type"
 import { Tabs } from "@mantine/core"
-import { TaskDetail, TaskDevices } from "../../Components/Task"
+import { TaskDetail, TaskDevices ,TaskLog} from "../../Components/Task"
 
 
 
@@ -49,7 +49,7 @@ const Task = () => {
                 <Tabs.List position="center">
                     <Tabs.Tab value="detail">DETAILS</Tabs.Tab>
                     <Tabs.Tab value="devices">DEVICES</Tabs.Tab>
-                    <Tabs.Tab value="settings">TRACKING</Tabs.Tab>
+                    <Tabs.Tab value="tracking">TRACKING</Tabs.Tab>
                 </Tabs.List>
 
                 <Tabs.Panel value="detail">
@@ -58,6 +58,10 @@ const Task = () => {
 
                 <Tabs.Panel value="devices">
                     <TaskDevices devices={devices} task={task} getTask={getTask}/>
+                </Tabs.Panel>
+
+                <Tabs.Panel value="tracking">
+                    <TaskLog  task={task} />
                 </Tabs.Panel>
             </Tabs>
 
