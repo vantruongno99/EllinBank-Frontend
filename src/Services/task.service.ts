@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import Cookies from 'js-cookie'
-import { EditTaskInput, TaskInfo, TaskInput } from '../Ultils/type'
+import { EditTaskInput, Log, TaskInfo, TaskInput } from '../Ultils/type'
 import { AxiosHandleResponse } from '../Ultils/middleware'
 
 
@@ -189,8 +189,9 @@ const deleteTask = async (taskId: number): Promise<void> => {
     }
 }
 
-const getLogs = async (taskId: number): Promise<void> => {
+const getLogs = async (taskId: number): Promise<Log[]|undefined> => {
     try {
+        console.log(`${baseUrl}/${taskId}/logs`)
         const res = await axios.get(`${baseUrl}/${taskId}/logs`,
             config
         )

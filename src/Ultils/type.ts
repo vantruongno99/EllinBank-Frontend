@@ -98,4 +98,14 @@ export interface ChangePasswordForm {
     newPassword : string
 }
 
+export interface Log {
+    id: number,
+    dateTimeUTC: Date,
+    timestampUTC: number,
+    deviceId: string,
+    taskId: number,
+    logType: string,
+    logValue: number,
+    logNote: string
+}
 

@@ -10,6 +10,8 @@ import { TaskDetail, TaskDevices ,TaskLog} from "../../Components/Task"
 const Task = () => {
     const [devices, setDevices] = useState<DeviceInfo[]>([])
     const [task, setTask] = useState<TaskForm | undefined>()
+    const [activeTab, setActiveTab] = useState<string | null>('detail');
+
     const params = useParams();
 
 
@@ -43,9 +45,10 @@ const Task = () => {
     useEffect(() => {
         getTask()
     }, [])
+
     return (
         <>
-            <Tabs defaultValue="detail">
+            <Tabs value={activeTab} onTabChange={setActiveTab}>
                 <Tabs.List position="center">
                     <Tabs.Tab value="detail">DETAILS</Tabs.Tab>
                     <Tabs.Tab value="devices">DEVICES</Tabs.Tab>
@@ -61,7 +64,7 @@ const Task = () => {
                 </Tabs.Panel>
 
                 <Tabs.Panel value="tracking">
-                    <TaskLog  task={task} />
+                {activeTab === "tracking" && <TaskLog task={task} />} 
                 </Tabs.Panel>
             </Tabs>
 
