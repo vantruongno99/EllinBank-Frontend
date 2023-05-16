@@ -6,15 +6,6 @@ import { Box, Checkbox, Space, Select } from "@mantine/core";
 import { Log } from "../../Ultils/type";
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import * as HC_exporting from 'highcharts/modules/exporting';
-import * as HC_exportdata from 'highcharts/modules/export-data';
-
-// Add Menu to the chart 
-// @ts-ignore
-HC_exporting(Highcharts)
-// @ts-ignore
-HC_exportdata(Highcharts)
-
 
 
 const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
