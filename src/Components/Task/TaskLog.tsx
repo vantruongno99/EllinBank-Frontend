@@ -28,11 +28,12 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
         if (task?.id) {
             try {
                 const res = await taskService.getLogs(task?.id)
-                if(!res){
+                if (!res) {
                     showErorNotification("No data")
                     return
                 }
                 setData(res)
+                console.log(res.length)
             }
             catch (e) {
                 if (e instanceof Error) {
@@ -45,13 +46,37 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
         }
     }
 
+    const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>
+        arr.reduce((groups, item) => {
+            (groups[key(item)] ||= []).push(item);
+            return groups;
+        }, {} as Record<K, T[]>);
+
+     const data1 = groupBy(data, i => i.deviceId)
+
+     const input = Object.keys(data1).map((deviceId) => {
+        return {
+            name: deviceId,
+            lineWidth: 1.25,
+            data: data1[deviceId].map(a => ([
+                a.timestampUTC * 1000, a.logValue
+            ])),
+        }
+    })
 
 
     const options = {
         chart: {
             zoomType: 'x',
-            backgroundColor: "transparent"
+            backgroundColor: "transparent",
+            type: 'spline',
+            height : 33  + '%',
+        
         },
+        time:{
+            useUTC: false,
+            timezone: 'Asia/Calcutta',
+          },
 
         title: {
             text: 'Chart'
@@ -76,13 +101,7 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
             enabled: false
         },
 
-        series: [{
-            data: data.map(a => ([
-                a.timestampUTC * 1000, a.logValue
-            ])),
-            lineWidth: 0.5,
-            name : "Sensor"
-        }]
+        series: input,
     }
 
     useEffect(() => {
@@ -91,7 +110,7 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
 
     const handleOkBtnClick = (event: boolean): void => {
         if (event) {
-            timeout.current = window.setInterval(() => setProgress(progress => progress + 1), 1000 * 60 * 15);
+            timeout.current = window.setInterval(() => setProgress(progress => progress + 1), 1000 * 60 * 5);
         } else {
             clearInterval(timeout.current);
         }
@@ -107,10 +126,9 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
                     placeholder="Pick one"
                     value={select} onChange={setSelect}
                     data={[
-                        { value: 'react', label: 'React' },
-                        { value: 'ng', label: 'Angular' },
-                        { value: 'svelte', label: 'Svelte' },
-                        { value: 'vue', label: 'Vue' },
+                        { value: 'CO2', label: 'CO2' },
+                        { value: 'O2', label: 'O2' },
+                        { value: 'O2', label: 'O2' },
                     ]}
                 />
                 <Space h="sm" />
@@ -120,10 +138,10 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
                 />
             </Box>
 
-           {data.length > 0 && <HighchartsReact
+            {data.length > 0 && <HighchartsReact
                 highcharts={Highcharts}
                 options={options}
-            /> } 
+            />}
         </>
     )
 }

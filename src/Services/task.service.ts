@@ -83,7 +83,7 @@ const updateTask = async (task: EditTaskInput): Promise<TaskInfo | undefined> =>
 
 const completeTask = async (taskId: number) => {
     try {
-        const res = await axios.put(`${baseUrl}/complete/${taskId}`, {},
+        const res = await axios.put(`${baseUrl}/${taskId}/complete`, {},
             config
         )
         return res.data
@@ -100,7 +100,7 @@ const completeTask = async (taskId: number) => {
 
 const pauseTask = async (taskId: number) => {
     try {
-        const res = await axios.put(`${baseUrl}/pause/${taskId}`, {},
+        const res = await axios.put(`${baseUrl}/${taskId}/pause`, {},
             config
         )
         return res.data
@@ -117,7 +117,7 @@ const pauseTask = async (taskId: number) => {
 
 const resumeTask = async (taskId: number) => {
     try {
-        const res = await axios.put(`${baseUrl}/resume/${taskId}`, {},
+        const res = await axios.put(`${baseUrl}/${taskId}/resume`, {},
             config
         )
         return res.data
@@ -207,6 +207,24 @@ const getLogs = async (taskId: number): Promise<Log[]|undefined> => {
     }
 }
 
+const getLogsByType = async (taskId: number , type : string): Promise<Log[]|undefined> => {
+    try {
+        console.log(`${baseUrl}/${taskId}/logs`)
+        const res = await axios.get(`${baseUrl}/${taskId}/logs?type=${type}`,
+            config
+        )
+        return res.data
+    }
+    catch (error: any | AxiosError) {
+        if (axios.isAxiosError(error)) {
+            AxiosHandleResponse(error)
+        } else {
+            console.log(error)
+
+        }
+    }
+}
+
 const taskService = {
     getAllTasks,
     getTask,
@@ -218,7 +236,8 @@ const taskService = {
     updateTask,
     deleteTask,
     unassignTask,
-    getLogs
+    getLogs,
+    getLogsByType
 }
 
 export default taskService
