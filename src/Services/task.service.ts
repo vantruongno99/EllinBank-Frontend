@@ -209,7 +209,6 @@ const getLogs = async (taskId: number): Promise<Log[]|undefined> => {
 
 const getLogsByType = async (taskId: number , type : string): Promise<Log[]|undefined> => {
     try {
-        console.log(`${baseUrl}/${taskId}/logs`)
         const res = await axios.get(`${baseUrl}/${taskId}/logs?type=${type}`,
             config
         )

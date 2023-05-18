@@ -2,22 +2,27 @@ import { useEffect, useState, useRef } from "react";
 import { TaskForm } from "../../Ultils/type"
 import { showErorNotification } from "../../Ultils/notification";
 import taskService from "../../Services/task.service";
-import { Box, Checkbox, Space, Select } from "@mantine/core";
+import { Box, Checkbox, Space, Select, Loader } from "@mantine/core";
 import { Log } from "../../Ultils/type";
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
+import * as Boost from 'highcharts/modules/boost';
+//@ts-ignore
+Boost(Highcharts);
 
 
 const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
     const [data, setData] = useState<Log[]>([])
     const [progress, setProgress] = useState<number>(0)
     const [select, setSelect] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false)
     const timeout = useRef<any>(null);
 
 
     const getLog = async () => {
         if (task?.id) {
             try {
+                setLoading(true)
                 const res = await taskService.getLogs(task?.id)
                 if (!res) {
                     showErorNotification("No data")
@@ -34,6 +39,9 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
                     showErorNotification("Unknown Error")
                 }
             }
+            finally {
+                setLoading(false)
+            }
         }
     }
 
@@ -43,12 +51,13 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
             return groups;
         }, {} as Record<K, T[]>);
 
-     const data1 = groupBy(data, i => i.deviceId)
+    const data1 = groupBy(data, i => i.deviceId)
 
-     const input = Object.keys(data1).map((deviceId) => {
+    const input = Object.keys(data1).map((deviceId) => {
         return {
+            type: "line",
             name: deviceId,
-            lineWidth: 1.25,
+            lineWidth: 1,
             data: data1[deviceId].map(a => ([
                 a.timestampUTC * 1000, a.logValue
             ])),
@@ -58,17 +67,28 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
 
     const options = {
         chart: {
+            height: 500,
             zoomType: 'x',
             backgroundColor: "transparent",
-            type: 'spline',
-            height : 33  + '%',
-        
+            panning: true,
+            panKey: 'shift',
+            scrollablePlotArea: {
+                minWidth: 1000,
+                scrollPositionX: 1
+            }
         },
-        time:{
+        boost: {
+
+        },
+        plotOptions: {
+            series: {
+                pointPlacement: 'on',
+            }
+        },
+        time: {
             useUTC: false,
             timezone: 'Asia/Calcutta',
-          },
-
+        },
         title: {
             text: 'Chart'
         },
@@ -79,11 +99,14 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
         yAxis: {
             title: {
                 text: 'Value'
-            }
+            },
+            lineWidth: 1,
+            tickWidth: 1,
         },
 
         xAxis: {
             type: 'datetime',
+            tickInterval: 60 * 60 * 24 * 5,
             title: {
                 text: 'Date time'
             }
@@ -101,7 +124,7 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
 
     const handleOkBtnClick = (event: boolean): void => {
         if (event) {
-            timeout.current = window.setInterval(() => setProgress(progress => progress + 1), 1000 * 60 * 5);
+            timeout.current = window.setInterval(() => setProgress(progress => progress + 1), 1000 * 60 * 15);
         } else {
             clearInterval(timeout.current);
         }
@@ -118,7 +141,7 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
                     value={select} onChange={setSelect}
                     data={[
                         { value: 'CO2', label: 'CO2' },
-                        { value: 'O2', label: 'O2' },
+                        { value: 'CH4', label: 'CH4' },
                         { value: 'O2', label: 'O2' },
                     ]}
                 />
@@ -129,7 +152,9 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
                 />
             </Box>
 
-            {data.length > 0 && <HighchartsReact
+            {loading && <> <Loader mt="1rem" /></>}
+
+            {data.length > 0 && !loading && <HighchartsReact
                 highcharts={Highcharts}
                 options={options}
             />}
