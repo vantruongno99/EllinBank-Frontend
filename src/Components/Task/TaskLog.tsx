@@ -2,8 +2,12 @@ import { useEffect, useState, useRef } from "react";
 import { TaskForm } from "../../Ultils/type"
 import { showErorNotification } from "../../Ultils/notification";
 import taskService from "../../Services/task.service";
-import { Box, Checkbox, Space, Select, Loader } from "@mantine/core";
+import { Box, Checkbox, Space, Select, Loader, Group, Tooltip, ActionIcon } from "@mantine/core";
 import { Log } from "../../Ultils/type";
+import { CSVLink, CSVDownload } from "react-csv";
+import {
+    IconFileDownload
+} from '@tabler/icons-react';
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import * as Boost from 'highcharts/modules/boost';
@@ -106,7 +110,6 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
 
         xAxis: {
             type: 'datetime',
-            tickInterval: 60 * 60 * 24 * 5,
             title: {
                 text: 'Date time'
             }
@@ -133,24 +136,41 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
 
     return (
         <>
-            <Space h="xl" />
-            <Box maw={300} >
-                <Select
-                    label="Select a type"
-                    placeholder="Pick one"
-                    value={select} onChange={setSelect}
-                    data={[
-                        { value: 'CO2', label: 'CO2' },
-                        { value: 'CH4', label: 'CH4' },
-                        { value: 'O2', label: 'O2' },
-                    ]}
-                />
-                <Space h="sm" />
-                <Checkbox
-                    onChange={(event) => handleOkBtnClick(event.currentTarget.checked)}
-                    label="Auto Refresh"
-                />
-            </Box>
+            <Space h="sm" />
+            <Group position="apart" spacing="xs" mx="1rem">
+                <Box maw={300} >
+                    <Select
+                        label="Select a type"
+                        placeholder="Pick one"
+                        value={select} onChange={setSelect}
+                        data={[
+                            { value: 'CO2', label: 'CO2' },
+                            { value: 'CH4', label: 'CH4' },
+                            { value: 'O2', label: 'O2' },
+                        ]}
+                    />
+                    <Space h="sm" />
+                    <Checkbox
+                        onChange={(event) => handleOkBtnClick(event.currentTarget.checked)}
+                        label="Auto Refresh"
+                    />
+                </Box>
+                {data.length > 0 &&
+                    <CSVLink
+                        data={data}
+                        filename={`${task?.id}-${select}.csv`}
+                    >
+                        <Tooltip label="Download as CSV">
+                            <ActionIcon color="blue" size="xl" radius="lg" variant="filled">
+                                <IconFileDownload
+                                    size="2rem"
+                                    strokeWidth={1}
+                                />
+                            </ActionIcon>
+                        </Tooltip>
+                    </CSVLink>}
+            </Group>
+
 
             {loading && <> <Loader mt="1rem" /></>}
 
