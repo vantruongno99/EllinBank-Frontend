@@ -10,11 +10,12 @@ async function loging(loginDetail: LoginDetail) {
     try {
 
         const response = await axios.post(`${baseUrl}/login`, loginDetail)
-
         const result = response.data
+
 
         Cookies.set('token', result.token)
         Cookies.set('username', result.username)
+        Cookies.set('role', result.role)
 
         return result
     }

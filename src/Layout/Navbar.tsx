@@ -1,11 +1,11 @@
 import { createStyles, Navbar, Group, Code, getStylesRef, rem, Text } from '@mantine/core';
 import {
-  IconBellRinging,
-  IconReceipt2,
+  IconUsers,
   IconHome,
   IconDevices,
   IconBook2
 } from '@tabler/icons-react';
+import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from "react-router-dom";
 
@@ -64,16 +64,25 @@ const useStyles = createStyles((theme) => ({
 }));
 
 
-const data = [
-  { link: '', label: "Home", icon: IconHome, },
-  { link: 'device', label: 'Devices', icon: IconDevices },
-  { link: 'task', label: 'Tasks', icon: IconBook2 },
-];
+
 
 
 function Nav() {
   const { classes, cx } = useStyles();
   const [active, setActive] = useState('/');
+
+
+  const isAdmin = Cookies.get('role') === "admin"
+
+  const data = [
+    { link: '', label: "Home", icon: IconHome, },
+    { link: 'device', label: 'Devices', icon: IconDevices },
+    { link: 'task', label: 'Tasks', icon: IconBook2 },
+    
+  ];
+
+  isAdmin && data.push({ link: 'user', label: 'Users', icon: IconUsers })
+
 
   const location = useLocation();
 

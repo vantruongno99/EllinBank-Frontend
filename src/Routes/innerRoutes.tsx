@@ -9,6 +9,9 @@ const CreateDevice = React.lazy(() => import("../Views/Device/CreateDevice"));
 const CreateTask = React.lazy(() => import("../Views/Task/CreateTask"));
 const Task = React.lazy(() => import("../Views/Task/Task"));
 const Profile = React.lazy(() => import("../Views/Profile"));
+const Users = React.lazy(() => import("../Views/User/Users"));
+const User = React.lazy(() => import("../Views/User/User"));
+const CreateUser = React.lazy(() => import("../Views/User/CreateUser"));
 
 
 const innerRoutes = [
@@ -19,7 +22,12 @@ const innerRoutes = [
     { path: '/device', element: <Devices /> },
     { path: '/device/new', element: <CreateDevice /> },
     { path: '/task/new', element: <CreateTask /> },
-    { path: '/profile/:id', element: <Profile /> },
+    { path: '/profile', element: <Profile /> },
+    { path: '/user', element: <Users /> },
+    { path: '/user/:username', element: <User /> },
+    { path: '/user/new', element: <CreateUser /> },
+
+
 
 
 

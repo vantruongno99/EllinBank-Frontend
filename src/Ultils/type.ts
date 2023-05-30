@@ -109,3 +109,17 @@ export interface Log {
     logNote: string
 }
 
+export interface UserInfo {
+    id : number ,
+    username : string,
+    role : string,
+    email : string
+}
+
+export interface UserInput {
+    username : string,
+    password : string,
+    email : string,
+    role? : string
+}
+

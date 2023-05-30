@@ -118,7 +118,7 @@ export default function CustomHeader() {
                         <Menu.Dropdown>
                             <Menu.Item
                                 component="a"
-                                href={`/profile/${Cookies.get('username')}`}
+                                href={`/profile`}
                                 color="blue"
                                 icon={<IconAddressBook size="1rem" stroke={1.5} />}>
                                 Profile

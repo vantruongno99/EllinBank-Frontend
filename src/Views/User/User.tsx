@@ -1,74 +1,46 @@
-import { useEffect } from "react"
-import userService from "../Services/user.service";
-import { useForm, matchesField } from '@mantine/form';
-import { Space, Input, Box, Button, Text, PasswordInput, Tabs, Select } from "@mantine/core"
-import { ChangePasswordForm } from "../Ultils/type";
-import authservice from "../Services/auth.service";
-import { useError } from "../Hook";
+import  { useState, useEffect } from "react"
+import userService from "../../Services/user.service"
+import { useParams } from "react-router-dom"
+import { UserInfo } from "../../Ultils/type"
+import moment from "moment"
+import { useForm } from '@mantine/form';
+import { Space, Input, Box, Button, Select, PasswordInput, Tabs } from "@mantine/core"
 
-const Device = () => {
-    const form = useForm<any>({
+
+
+
+const User = () => {
+    const [user, setUser] = useState<UserInfo | null>(null)
+    const params = useParams();
+
+    const form = useForm<UserInfo>({
         initialValues: {
-            id: "",
+            id: 0,
             username: "",
-            email: ""
+            email: "",
+            role :''
         },
-        validate: {
-            username: (value) => (value.length < 5 ? 'Name must have at least 5 letters' : null),
-        },
+       
         // functions will be used to validate values at corresponding key
     });
 
-    const errorMessage = useError()
+    const form2 = useForm<{password : string , confirmPassword : string}>({
 
-
-    const form2 = useForm({
-        initialValues: {
-            password: "",
-            newPassword: ""
-        },
-        validate: {
-            password: (value) => (value.length < 8 ? 'Name must have at least 5 letters' : null),
-            newPassword: matchesField('password', 'Passwords are not the same'),
-        },
     });
 
     const getUser = async () => {
-        try {
-            const res = await userService.getCurrentUser()
-            if (res) {
-                form.setValues(res)
+        const username = params.username
+        if (username !== undefined) {
+            try {
+                const res = await userService.getUser(username)
+                if (res) {
+                    form.setValues(res)
+                }
+            }
+            catch (e) {
+                console.log(e)
             }
         }
-        catch (e) {
-            if (e instanceof Error) {
-                errorMessage.set(e.message)
-            }
-            else {
-                console.log("Unknown Error")
-            }
-        }
-
-    }
-
-    const handleChangePassword = async (data: ChangePasswordForm) => {
-
-        const input = { ...data, username: form.values.username }
-
-        try {
-            await authservice.changePassword(input)
-            form2.reset()
-        }
-
-        catch (e) {
-            if (e instanceof Error) {
-                errorMessage.set(e.message)
-            }
-            else {
-                console.log("Unknown Error")
-            }
-        }
-
     }
 
     useEffect(() => {
@@ -76,36 +48,31 @@ const Device = () => {
     }, [])
     return (
         <>
-
-            <Tabs defaultValue="detail">
+             <Tabs defaultValue="detail">
                 <Tabs.List position="center">
                     <Tabs.Tab value="detail">DETAILS</Tabs.Tab>
-                    <Tabs.Tab value="security">SECURITY</Tabs.Tab>
                 </Tabs.List>
                 <Tabs.Panel value="security">
-                    <form onSubmit={form2.onSubmit(handleChangePassword)}>
+                    <form onSubmit={form.onSubmit((a)=>console.log(a))}>
+                        <Space h="xl" />
                         <Box maw={300} >
                             <Input.Wrapper
-                                mt="1rem"
+
                                 label="Password :"
                             >
-                                <PasswordInput   {...form2.getInputProps('password')} size="md" />
-                            </Input.Wrapper>
-                        </Box>
-                        <Box maw={300} >
-                            <Input.Wrapper
-                                mt="1rem"
-                                label="New Passowrd :"
-                            >
-                                <PasswordInput   {...form2.getInputProps('newPassword')} size="md" />
+                                <PasswordInput   {...form.getInputProps('password')} size="md" />
                             </Input.Wrapper>
                         </Box>
                         <Space h="xl" />
-                        {errorMessage.value && <>
-                            <Text color="red">
-                                {errorMessage.value}</Text>
-                            <Space h="xl" />
-                        </>}
+                        <Box maw={300} >
+                            <Input.Wrapper
+
+                                label="New Passowrd :"
+                            >
+                                <PasswordInput   {...form.getInputProps('newPassword')} size="md" />
+                            </Input.Wrapper>
+                        </Box>
+                        <Space h="xl" />
                         <Button type="submit">
                             Save
                         </Button>
@@ -130,6 +97,7 @@ const Device = () => {
                         <Input.Wrapper
                             label="Email :"
                             mt="1rem"
+
                         >
                             <Input   {...form.getInputProps('email')} size="md" disabled />
                         </Input.Wrapper>
@@ -151,9 +119,8 @@ const Device = () => {
 
             </Tabs>
 
-
         </>
     )
 }
 
-export default Device
+export default User

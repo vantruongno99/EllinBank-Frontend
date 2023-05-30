@@ -26,8 +26,11 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
     const getLog = async () => {
         if (task?.id) {
             try {
+                if (!select) {
+                    return
+                }
                 setLoading(true)
-                const res = await taskService.getLogs(task?.id)
+                const res = await taskService.getLogsByType(task?.id, select)
                 if (!res) {
                     showErorNotification("No data")
                     return
@@ -150,10 +153,10 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
                         ]}
                     />
                     <Space h="sm" />
-                    <Checkbox
+                    {task?.status !== "COMPLETED" && <Checkbox
                         onChange={(event) => handleOkBtnClick(event.currentTarget.checked)}
                         label="Auto Refresh"
-                    />
+                    />}
                 </Box>
                 {data.length > 0 &&
                     <CSVLink
