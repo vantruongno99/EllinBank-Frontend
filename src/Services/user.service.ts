@@ -3,7 +3,9 @@ import Cookies from 'js-cookie'
 import { AxiosHandleResponse } from '../Ultils/middleware'
 import { UserInfo, UserInput } from '../Ultils/type'
 
-const baseUrl = ' http://localhost:3003/api/user'
+import { domain } from '../Ultils/config'
+
+const baseUrl = `${domain}/api/user`
 
 const config = {
     headers: { Authorization: `bearer ${Cookies.get('token')}` }, // notice the Bearer before your token

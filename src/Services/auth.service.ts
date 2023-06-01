@@ -2,8 +2,8 @@ import axios, { AxiosError } from 'axios'
 import Cookies from 'js-cookie'
 import { LoginDetail, ChangePasswordInput } from '../Ultils/type'
 import { AxiosHandleResponse } from '../Ultils/middleware'
-
-const baseUrl = ' http://localhost:3003/api/auth'
+import { domain } from '../Ultils/config'
+const baseUrl = `${domain}/api/auth`
 
 
 async function loging(loginDetail: LoginDetail) {

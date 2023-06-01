@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react"
+import { useState } from "react"
 import taskService from "../../Services/task.service"
-import { useParams, useNavigate } from "react-router-dom"
 import { DeviceInfo, TaskForm, TaskInfo } from "../../Ultils/type"
 import { Space, Input, Grid, Box, Title, NumberInput, Tabs, Table, Anchor, Text, Button, Menu, Group, ActionIcon, rem, Modal, createStyles, Checkbox } from "@mantine/core"
 import TaskDevicesAssign from "./TaskDevicesAssign"

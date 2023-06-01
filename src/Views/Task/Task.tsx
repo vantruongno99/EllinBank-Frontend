@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import taskService from "../../Services/task.service"
 import { useParams } from "react-router-dom"
 import { DeviceInfo, TaskForm, TaskInfo } from "../../Ultils/type"
 import { Tabs } from "@mantine/core"
-import { TaskDetail, TaskDevices ,TaskLog} from "../../Components/Task"
+import {TaskDevices} from "../../Components/Task"
 
 
 
@@ -13,8 +13,6 @@ const Task = () => {
     const [activeTab, setActiveTab] = useState<string | null>('detail');
 
     const params = useParams();
-
-
     const getTask = async () => {
         const id = params.id
         if (id !== undefined) {
@@ -54,17 +52,8 @@ const Task = () => {
                     <Tabs.Tab value="devices">DEVICES</Tabs.Tab>
                     <Tabs.Tab value="tracking">TRACKING</Tabs.Tab>
                 </Tabs.List>
-
-                <Tabs.Panel value="detail">
-                    <TaskDetail task={task} getTask={getTask} />
-                </Tabs.Panel>
-
                 <Tabs.Panel value="devices">
-                    <TaskDevices devices={devices} task={task} getTask={getTask}/>
-                </Tabs.Panel>
-
-                <Tabs.Panel value="tracking">
-                {activeTab === "tracking" && <TaskLog task={task} />} 
+                    <TaskDevices devices={devices} task={task} getTask={getTask} />
                 </Tabs.Panel>
             </Tabs>
 

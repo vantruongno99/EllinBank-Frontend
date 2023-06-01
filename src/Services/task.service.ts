@@ -2,9 +2,10 @@ import axios, { AxiosError } from 'axios'
 import Cookies from 'js-cookie'
 import { EditTaskInput, Log, TaskInfo, TaskInput } from '../Ultils/type'
 import { AxiosHandleResponse } from '../Ultils/middleware'
+import { domain } from '../Ultils/config'
 
+const baseUrl = `${domain}/api/task`
 
-const baseUrl = ' http://localhost:3003/api/task'
 const config = {
     headers: { Authorization: `bearer ${Cookies.get('token')}` }, // notice the Bearer before your token
 }

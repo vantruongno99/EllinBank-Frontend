@@ -169,7 +169,6 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
                 <Grid.Col span={4}>
                     <Box maw={440} >
                         <Input.Wrapper
-
                             label="ID :"
                         >
                             <Input   {...form.getInputProps('id')} size="md" disabled />
