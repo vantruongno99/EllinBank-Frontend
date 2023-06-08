@@ -95,7 +95,8 @@ export interface ChangePasswordInput {
 
 export interface ChangePasswordForm {
     password : string , 
-    newPassword : string
+    newPassword : string,
+    confirmPassword : string
 }
 
 export interface Log {

@@ -17,11 +17,11 @@ const CreateUser = React.lazy(() => import("../Views/User/CreateUser"));
 const innerRoutes = [
     { path: '/', element: <Home /> },
     { path: '/task/:id', element: <Task /> },
+    { path: '/task/new', element: <CreateTask /> },
     { path: '/task', element: <Tasks /> },
     { path: '/device/:id', element: <Device /> },
     { path: '/device', element: <Devices /> },
     { path: '/device/new', element: <CreateDevice /> },
-    { path: '/task/new', element: <CreateTask /> },
     { path: '/profile', element: <Profile /> },
     { path: '/user', element: <Users /> },
     { path: '/user/:username', element: <User /> },

@@ -10,7 +10,7 @@ import {
 } from '@tabler/icons-react';
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import * as Boost from 'highcharts/modules/boost';
+import Boost from 'highcharts/modules/boost';
 //@ts-ignore
 Boost(Highcharts);
 

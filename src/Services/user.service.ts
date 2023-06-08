@@ -79,11 +79,29 @@ const createUser = async (newUser: UserInput): Promise<UserInfo | undefined> => 
 }
 
 
+const deleteUser = async (username: string): Promise<void> => {
+    try {
+        await axios.delete(`${baseUrl}/${username}`,
+            config
+        )
+    }
+    catch (error: any | AxiosError) {
+        if (axios.isAxiosError(error)) {
+            throw AxiosHandleResponse(error)
+        } else {
+            console.log(error)
+
+        }
+    }
+}
+
+
 const userService = {
     getUser,
     getAllUsers,
     createUser,
-    getCurrentUser
+    getCurrentUser,
+    deleteUser
 }
 
 

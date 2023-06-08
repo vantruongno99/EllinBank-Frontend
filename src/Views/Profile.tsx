@@ -25,11 +25,13 @@ const Device = () => {
     const form2 = useForm({
         initialValues: {
             password: "",
-            newPassword: ""
+            newPassword: "",
+            confirmPassword: ""
         },
         validate: {
             password: (value) => (value.length < 8 ? 'Name must have at least 5 letters' : null),
-            newPassword: matchesField('password', 'Passwords are not the same'),
+            newPassword: (value) => (value.length < 8 ? 'Name must have at least 5 letters' : null),
+            confirmPassword: matchesField('newPassword', 'Passwords are not the same')
         },
     });
 
@@ -55,8 +57,10 @@ const Device = () => {
 
         const input = { ...data, username: form.values.username }
 
+        const { confirmPassword, ...input1 } = input
+
         try {
-            await authservice.changePassword(input)
+            await authservice.changePassword(input1)
             form2.reset()
         }
 
@@ -98,6 +102,14 @@ const Device = () => {
                                 label="New Passowrd :"
                             >
                                 <PasswordInput   {...form2.getInputProps('newPassword')} size="md" />
+                            </Input.Wrapper>
+                        </Box>
+                        <Box maw={300} >
+                            <Input.Wrapper
+                                mt="1rem"
+                                label="Confirm Passowrd :"
+                            >
+                                <PasswordInput   {...form2.getInputProps('confirmPassword')} size="md" />
                             </Input.Wrapper>
                         </Box>
                         <Space h="xl" />

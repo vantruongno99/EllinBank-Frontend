@@ -1,16 +1,21 @@
-import  { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import userService from "../../Services/user.service"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { UserInfo } from "../../Ultils/type"
 import moment from "moment"
+import { Space, Input, Box, Button, Select, PasswordInput, Tabs, Tooltip, Group, ActionIcon } from "@mantine/core"
+import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
-import { Space, Input, Box, Button, Select, PasswordInput, Tabs } from "@mantine/core"
+import { IconCircleCheck, IconPlayerPlay, IconPlayerPause, IconTrash } from '@tabler/icons-react';
+import { showErorNotification, showSuccessNotification } from "../../Ultils/notification"
 
 
 
 
 const User = () => {
     const [user, setUser] = useState<UserInfo | null>(null)
+    const navigate = useNavigate();
+
     const params = useParams();
 
     const form = useForm<UserInfo>({
@@ -18,13 +23,13 @@ const User = () => {
             id: 0,
             username: "",
             email: "",
-            role :''
+            role: ''
         },
-       
+
         // functions will be used to validate values at corresponding key
     });
 
-    const form2 = useForm<{password : string , confirmPassword : string}>({
+    const form2 = useForm<{ password: string, confirmPassword: string }>({
 
     });
 
@@ -43,17 +48,36 @@ const User = () => {
         }
     }
 
+    const handleDelete = async () => {
+        const username = params.username
+        if (username !== undefined) {
+            try {
+                await userService.deleteUser(username)
+                navigate('/user')
+            }
+            catch (e) {
+                if (e instanceof Error) {
+                    showErorNotification(e.message)
+                }
+                else {
+                    showErorNotification("Unknown Error")
+                }
+            }
+        }
+    }
+
+
     useEffect(() => {
         getUser()
     }, [])
     return (
         <>
-             <Tabs defaultValue="detail">
+            <Tabs defaultValue="detail">
                 <Tabs.List position="center">
                     <Tabs.Tab value="detail">DETAILS</Tabs.Tab>
                 </Tabs.List>
                 <Tabs.Panel value="security">
-                    <form onSubmit={form.onSubmit((a)=>console.log(a))}>
+                    <form onSubmit={form.onSubmit((a) => console.log(a))}>
                         <Space h="xl" />
                         <Box maw={300} >
                             <Input.Wrapper
@@ -80,6 +104,16 @@ const User = () => {
                 </Tabs.Panel>
 
                 <Tabs.Panel value="detail">
+                    <Group position="right">
+                        <Tooltip
+                            label="Delete this user"
+                            color="red"
+                        >
+                            <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={() => handleDelete()}>
+                                <IconTrash />
+                            </ActionIcon >
+                        </Tooltip>
+                    </Group>
                     <Space h="xl" />
                     <Box maw={300} >
                         <Input.Wrapper
