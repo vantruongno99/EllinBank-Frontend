@@ -8,9 +8,11 @@ import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { taskStatusColor } from "../../Ultils/colors"
 import { showErorNotification, showSuccessNotification } from "../../Ultils/notification"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: TaskForm | undefined }) => {
+const TaskDetail = ({ task }: { task: TaskForm }) => {
     const navigate = useNavigate();
+    const queryClient = useQueryClient()
     const form = useForm<TaskForm>(
         {
             initialValues: task,
@@ -26,104 +28,110 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
         if (task) form.setValues(task)
     }, [task])
 
-
-
-    const handleUpdate = async (data: TaskForm) => {
-        const id = task?.id
-        if (id !== undefined) {
-            try {
-                const input: EditTaskInput = {
-                    endTime: new Date(data.endTime),
-                    id: data.id,
-                    name: data.name,
-                    logPeriod: data.logPeriod
-                }
-                const res: TaskInfo | undefined = await taskService.updateTask(input)
-                await getTask()
-                showSuccessNotification(`Task ${form.values.name} has been updated`)
-            }
-            catch (e) {
-                if (e instanceof Error) {
-                    showErorNotification(e.message)
-                }
-                else {
-                    showErorNotification("Unknown Error")
-                }
-            }
-        }
+    if (!task) {
+        return <>404</>
     }
 
 
-    const handleComplete = async () => {
-        const id = task?.id
-        if (id !== undefined) {
-            try {
-                await taskService.completeTask(id)
-                getTask()
+    const updateTask = useMutation({
+        mutationFn: async (data: TaskForm) => {
+            const input: EditTaskInput = {
+                endTime: new Date(data.endTime),
+                id: data.id,
+                name: data.name,
+                logPeriod: data.logPeriod
             }
-            catch (e) {
-                if (e instanceof Error) {
-                    showErorNotification(e.message)
-                }
-                else {
-                    showErorNotification("Unknown Error")
-                }
+            return await taskService.updateTask(input)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['task', task.id] })
+            showSuccessNotification(`Task ${form.values.name} has been updated`)
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
             }
-        }
-    }
+            else {
+                showErorNotification("Unknown Error")
+            }
+        },
+    })
 
-    const handleDelete = async () => {
-        const id = task?.id
-        if (id !== undefined) {
-            try {
-                await taskService.deleteTask(id)
-                navigate('/task')
-            }
-            catch (e) {
-                if (e instanceof Error) {
-                    showErorNotification(e.message)
-                }
-                else {
-                    showErorNotification("Unknown Error")
-                }
-            }
-        }
-    }
 
-    const handleResume = async () => {
-        const id = task?.id
-        if (id !== undefined) {
-            try {
-                await taskService.resumeTask(id)
-                getTask()
+    const completeTask = useMutation({
+        mutationFn: async () => {
+            return await taskService.completeTask(task.id)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['task', task.id] })
+            showSuccessNotification(`Task ${form.values.name} has been completed`)
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
             }
-            catch (e) {
-                if (e instanceof Error) {
-                    showErorNotification(e.message)
-                }
-                else {
-                    showErorNotification("Unknown Error")
-                }
+            else {
+                showErorNotification("Unknown Error")
             }
-        }
-    }
-    const handlePause = async () => {
-        const id = task?.id
-        if (id !== undefined) {
-            try {
-                await taskService.pauseTask(id)
-                getTask()
+        },
+    })
+
+    const deleteTask = useMutation({
+        mutationFn: async () => {
+            return await taskService.deleteTask(task.id)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['task'] })
+            queryClient.removeQueries({ queryKey: ['task',task.id] })
+            showSuccessNotification(`Task ${form.values.name} has been deleted`)
+            navigate('/task')
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
             }
-            catch (e) {
-                if (e instanceof Error) {
-                    showErorNotification(e.message)
-                }
-                else {
-                    showErorNotification("Unknown Error")
-                }
+            else {
+                showErorNotification("Unknown Error")
             }
-        }
-    }
+        },
+    })
+
+    const resumeTask = useMutation({
+        mutationFn: async () => {
+            return await taskService.resumeTask(task.id)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['task',task.id] })
+            showSuccessNotification(`Task ${form.values.name} has been resumed`)
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
+            }
+            else {
+                showErorNotification("Unknown Error")
+            }
+        },
+    })
+
+
+    const pauseTask = useMutation({
+        mutationFn: async () => {
+            return await taskService.pauseTask(task.id)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['task',task.id] })
+            showSuccessNotification(`Task ${form.values.name} has been paused`)
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
+            }
+            else {
+                showErorNotification("Unknown Error")
+            }
+        },
+    })
 
 
 
@@ -135,16 +143,16 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
         return (
             <Menu.Dropdown>
                 {
-                    form.values.status === "ONGOING" && <Menu.Item color="orange" onClick={() => handlePause()} icon={<IconPlayerPause size="2rem" stroke={1} />}>
+                    form.values.status === "ONGOING" && <Menu.Item color="orange" onClick={() => pauseTask.mutate()} icon={<IconPlayerPause size="2rem" stroke={1} />}>
                         Pause
                     </Menu.Item>
                 }
                 {
-                    form.values.status === "PAUSED" && <Menu.Item color="blue" onClick={() => handleResume()} icon={<IconPlayerPlay size="2rem" stroke={1} />}>
+                    form.values.status === "PAUSED" && <Menu.Item color="blue" onClick={() => resumeTask.mutate()} icon={<IconPlayerPlay size="2rem" stroke={1} />}>
                         Resume
                     </Menu.Item>
                 }
-                <Menu.Item color="green" onClick={() => handleComplete()} icon={<IconCircleCheck size="2rem" stroke={1.5} />}>
+                <Menu.Item color="green" onClick={() => completeTask.mutate()} icon={<IconCircleCheck size="2rem" stroke={1.5} />}>
                     Complete
                 </Menu.Item>
             </Menu.Dropdown>
@@ -152,13 +160,13 @@ const TaskDetail = ({ getTask, task }: { getTask: () => Promise<void>, task: Tas
     }
 
     return (
-        <form onSubmit={form.onSubmit(handleUpdate)} >
+        <form onSubmit={form.onSubmit(data => updateTask.mutate(data))} >
             <Group position="right">
                 <Tooltip
                     label="Delete this task"
                     color="red"
                 >
-                    <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={() => handleDelete()}>
+                    <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={() => deleteTask.mutate()}>
                         <IconTrash />
                     </ActionIcon >
                 </Tooltip>

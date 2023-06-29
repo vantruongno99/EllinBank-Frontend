@@ -1,11 +1,12 @@
 import { useEffect } from "react"
 import userService from "../Services/user.service";
 import { useForm, matchesField } from '@mantine/form';
-import { Space, Input, Box, Button, Text, PasswordInput, Tabs, Select } from "@mantine/core"
+import { Space, Input, Box, Button, Text, PasswordInput, Tabs, Select, Loader } from "@mantine/core"
 import { ChangePasswordForm } from "../Ultils/type";
 import authservice from "../Services/auth.service";
-import { useError } from "../Hook";
-
+import { useError } from "../Hook"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { showErorNotification, showSuccessNotification } from "../Ultils/notification";
 const Device = () => {
     const form = useForm<any>({
         initialValues: {
@@ -35,49 +36,60 @@ const Device = () => {
         },
     });
 
-    const getUser = async () => {
-        try {
+
+    const { isLoading } = useQuery({
+        queryKey: ['profile'],
+        queryFn: async () => {
             const res = await userService.getCurrentUser()
-            if (res) {
-                form.setValues(res)
+            if (!res) {
+                throw new Error()
             }
-        }
-        catch (e) {
+            return res
+        },
+        onSuccess: (data) => {
+            form.setValues(data)
+        },
+        onError: (e) => {
             if (e instanceof Error) {
-                errorMessage.set(e.message)
+                showErorNotification(e.message)
             }
             else {
-                console.log("Unknown Error")
+                showErorNotification("Unknown Error")
             }
-        }
+        },
+    })
 
-    }
 
-    const handleChangePassword = async (data: ChangePasswordForm) => {
+    const changePassword = useMutation({
+        mutationFn: async (data: ChangePasswordForm) => {
+            const input = { ...data, username: form.values.username }
 
-        const input = { ...data, username: form.values.username }
+            const { confirmPassword, ...input1 } = input
 
-        const { confirmPassword, ...input1 } = input
+            return await authservice.changePassword(input1)
 
-        try {
-            await authservice.changePassword(input1)
+        },
+        onSuccess: () => {
             form2.reset()
-        }
-
-        catch (e) {
+            showSuccessNotification(`Password has been changed`)
+        },
+        onError: (e) => {
             if (e instanceof Error) {
-                errorMessage.set(e.message)
+                showErorNotification(e.message)
             }
             else {
-                console.log("Unknown Error")
+                showErorNotification("Unknown Error")
             }
-        }
+        },
+    })
 
+
+
+    if (isLoading) {
+        return <Loader />
     }
 
-    useEffect(() => {
-        getUser()
-    }, [])
+
     return (
         <>
 
@@ -87,7 +99,7 @@ const Device = () => {
                     <Tabs.Tab value="security">SECURITY</Tabs.Tab>
                 </Tabs.List>
                 <Tabs.Panel value="security">
-                    <form onSubmit={form2.onSubmit(handleChangePassword)}>
+                    <form onSubmit={form2.onSubmit(data => changePassword.mutate(data))}>
                         <Box maw={300} >
                             <Input.Wrapper
                                 mt="1rem"

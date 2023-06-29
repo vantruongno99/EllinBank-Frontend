@@ -1,64 +1,50 @@
 import React, { useState, useEffect } from "react"
 import taskService from "../../Services/task.service";
 import { TaskInfo } from "../../Ultils/type"
-import { Table, Anchor, Button, Group, Space , Tooltip ,Text} from '@mantine/core'
+import { Anchor, Button, Group, Space, Tooltip, Text, Loader } from '@mantine/core'
 import { useLocation, useNavigate } from 'react-router-dom';
 import moment from "moment";
 import {
     IconAlertTriangle
 } from '@tabler/icons-react';
 import { taskStatusColor } from "../../Ultils/colors"
+import { IconChevronUp, IconSelector } from '@tabler/icons-react';
+import { DataTable, DataTableSortStatus } from 'mantine-datatable';
+import sortBy from 'lodash/sortBy';
+import { useQuery } from "@tanstack/react-query";
+import { showErorNotification } from "../../Ultils/notification";
 
-const Devices = () => {
-    const [tasks, setTasks] = useState<TaskInfo[]>([])
+
+
+
+const Tasks = () => {
+
     const navigate = useNavigate()
-
-
-    const getDevice = async () => {
-        try {
-            const res: TaskInfo[] | undefined = await taskService.getAllTasks()
-            if (res && res?.length > 0) {
-                setTasks(res)
-            }
-
-        }
-        catch (e) {
-            console.log(e)
-        }
-    }
-
- 
-
     const location = useLocation();
 
-    const rows = tasks.map((element) => (
-        <tr key={element.id}>
-            <td>
-                <Anchor href={`${location.pathname}/${element.id}`} target="_blank">
-                    {element.id}
-                </Anchor>
-            </td>
-            <td>{element.name}</td>
-            <td> {moment(element.startTime).format('DD/MM/yyyy HH:mm')}</td>
-            <td> <Group position="left">
-                {moment(element.endTime).format('DD/MM/yyyy HH:mm')} 
-            {(new Date(element.endTime) < new Date()) && <Tooltip label="Delayed"  color="orange"><IconAlertTriangle color="orange"/></Tooltip>}
-            </Group>
-            </td>
-            <td>{element.createUser}</td>
-            <td><Text color={taskStatusColor(element.status)}>{element.status}</Text></td>
-        </tr>
-    ))
 
+    const { isLoading, error, isError, data } = useQuery({
+        queryKey: ['task'],
+        initialData: [],
+        queryFn: async () => {
+            const res: TaskInfo[] | undefined = await taskService.getAllTasks()
+            if (!res) {
+                throw new Error()
+            }
+            return res
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
+            }
+            else {
+                showErorNotification("Unknown Error")
+            }
+        },
+    })
+    if (isLoading) return <Loader />
 
-    
-
-
-    useEffect(() => {
-        getDevice()
-    }, [])
-
-
+    if (isError) return <>'An error has occurred: ' + {JSON.stringify(error)}</>
 
     return (
         <> <Group position="right">
@@ -67,21 +53,90 @@ const Devices = () => {
             </Button>
         </Group>
             <Space h="xl" />
-            <Table fontSize="md">
-                <thead>
-                    <tr>
-                        <th>Task No.</th>
-                        <th>Name</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
-                        <th>Created By</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>{rows}</tbody>
-            </Table>
+            <TaskTable data={data} isLoading={isLoading} />
+
         </>
     )
 }
 
-export default Devices
+const TaskTable = ({ data, isLoading }: { data: TaskInfo[], isLoading: boolean }) => {
+    const [tasks, setTasks] = useState<TaskInfo[]>(data)
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'name', direction: 'asc' });
+
+    useEffect(() => {
+        setTasks(data)
+    }, [data])
+
+    useEffect(() => {
+        const data = sortBy(tasks, sortStatus.columnAccessor) as TaskInfo[];
+        setTasks(sortStatus.direction === 'desc' ? data.reverse() : data);
+    }, [sortStatus]);
+
+
+    return (<>
+        <DataTable
+            minHeight={tasks.length === 0 ? 150 : 0}
+            withBorder
+            borderRadius={5}
+            verticalAlignment="center"
+            fontSize="md"
+            sortStatus={sortStatus}
+            fetching={isLoading}
+            onSortStatusChange={setSortStatus}
+            sortIcons={{
+                sorted: <IconChevronUp size={14} />,
+                unsorted: <IconSelector size={14} />,
+            }}
+            columns={[
+                {
+                    accessor: 'id',
+                    title: 'Task No',
+                    sortable: true,
+                    render: ({ id }) =>
+                        <Anchor href={`${location.pathname}/${id}`} target="_blank">
+                            {id}
+                        </Anchor>
+
+                },
+                {
+                    accessor: 'name',
+                    title: 'Name',
+                    sortable: true,
+
+                },
+                {
+                    accessor: 'startTime',
+                    sortable: true,
+                    render: ({ startTime }) => (
+                        <Group position="left">
+                            {moment(startTime).format('DD/MM/yyyy HH:mm')}
+                        </Group>
+                    )
+                },
+                {
+                    accessor: 'endTime',
+                    sortable: true,
+                    render: ({ endTime }) => (
+                        <Group position="left">
+                            {moment(endTime).format('DD/MM/yyyy HH:mm')}
+                            {(new Date(endTime) < new Date()) && <Tooltip label="Delayed" color="orange"><IconAlertTriangle color="orange" /></Tooltip>}
+                        </Group>
+                    )
+                },
+                {
+                    accessor: 'createUser',
+                    sortable: true,
+                },
+                {
+                    accessor: 'status',
+                    sortable: true,
+                    render: ({ status }) => <Text color={taskStatusColor(status)}>{status}</Text>
+                }
+            ]}
+
+            records={tasks}
+        />
+    </>)
+}
+
+export default Tasks

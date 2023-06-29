@@ -1,167 +1,113 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import taskService from "../../Services/task.service"
-import { DeviceInfo, TaskForm, TaskInfo } from "../../Ultils/type"
-import { Space, Input, Grid, Box, Title, NumberInput, Tabs, Table, Anchor, Text, Button, Menu, Group, ActionIcon, rem, Modal, createStyles, Checkbox } from "@mantine/core"
+import { DeviceInfo, TaskForm } from "../../Ultils/type"
+import { Space, Box, Anchor, Text, Button, Group, } from "@mantine/core"
 import TaskDevicesAssign from "./TaskDevicesAssign"
-import { IconX } from '@tabler/icons-react';
 import { deviceStatusColor } from "../../Ultils/colors"
-import { showErorNotification } from "../../Ultils/notification"
+import { IconChevronUp, IconSelector } from '@tabler/icons-react';
+import { DataTable, DataTableSortStatus } from 'mantine-datatable';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { showErorNotification } from "../../Ultils/notification";
+import sortBy from 'lodash/sortBy';
 
 
-const useStyles = createStyles((theme) => ({
-    rowSelected: {
-        backgroundColor:
-            theme.colorScheme === 'dark'
-                ? theme.fn.rgba(theme.colors[theme.primaryColor][7], 0.2)
-                : theme.colors["red"][2],
-    },
-}));
+
+const TaskDevices = ({ devices, task }: { devices: DeviceInfo[], task: TaskForm }) => {
+    const [table, setTable] = useState<DeviceInfo[]>([])
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'name', direction: 'asc' });
+    const [selection, setSelection] = useState<DeviceInfo[]>([]);
+    const queryClient = useQueryClient()
 
 
-const TaskDevices = ({ devices, task, getTask }: { devices: DeviceInfo[], task: TaskForm | undefined, getTask: () => Promise<void> }) => {
-    const { classes, cx } = useStyles();
-    const [selection, setSelection] = useState<string[]>([]);
+    useEffect(() => {
+        const data = sortBy(table, sortStatus.columnAccessor) as DeviceInfo[];
+        setTable(sortStatus.direction === 'desc' ? data.reverse() : data);
+    }, [sortStatus]);
 
-    const handleUnassign = async () => {
-        const taskId = task?.id
-        if (taskId && selection.length > 0) {
-            try {
-                for (const deviceId of selection) {
-                    await taskService.unassignTask(taskId, deviceId)
-                }
-                setSelection([])
-                await getTask()
+    useEffect(() => {
+        setTable(devices)
+    }, [devices])
 
+
+
+    const unAssignTask = useMutation({
+        mutationFn: async () => {
+            for (const device of selection) {
+                await taskService.unassignTask(task.id, device.id)
             }
-            catch (e) {
-                if (e instanceof Error) {
-                    showErorNotification(e.message)
-                }
-                else {
-                    showErorNotification("Unknown Error")
-                }
+            return
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['task', task.id] })
+            setSelection([])
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
             }
-        }
-    }
-
-    const handleAssign = async (taskId: number, selection: string[]) => {
-        if (taskId && selection.length > 0) {
-            try {
-                for (const deviceId of selection) {
-                    await taskService.assignTask(taskId, deviceId)
-                }
-                await getTask()
-
+            else {
+                showErorNotification("Unknown Error")
             }
-            catch (e) {
-                if (e instanceof Error) {
-                    showErorNotification(e.message)
-                }
-                else {
-                    showErorNotification("Unknown Error")
-                }
-            }
-        }
-    }
+        },
+    })
+
+  
+
+    const tableProp = task?.status !== "COMPLETED" ? {
+        selectedRecords: selection,
+        onSelectedRecordsChange: setSelection
+    } : {}
 
 
-    const toggleRow = (id: string) =>
-        setSelection((current) =>
-            current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
-        );
-
- 
-
-    const rows = devices.map((element: any) => {
-        const selected = selection.includes(element.id);
-
-        return (
-            <tr key={element.id} className={cx({ [classes.rowSelected]: selected })}>
-                <td>
-                    <Checkbox
-                        icon={IconX}
-                        checked={selection.includes(element.id)}
-                        onChange={() => toggleRow(element.id)}
-                        transitionDuration={0}
-                        color="red"
-                    />
-                </td>
-                <td> <Anchor href={`/device/${element.id}`} target="_blank">
-                    {element.id}
-                </Anchor></td>
-                <td>{element.name}</td>
-                <td><Text color={deviceStatusColor(element.status)}>{element.status}</Text></td>
-
-            </tr>
-        )
-    }
-    )
-
-    const completedRows = devices.map((element: any) => {
-        const selected = selection.includes(element.id);
-
-        return (
-            <tr key={element.id} className={cx({ [classes.rowSelected]: selected })}>
-
-                <td> <Anchor href={`/device/${element.id}`} target="_blank">
-                    {element.id}
-                </Anchor></td>
-                <td>{element.name}</td>
-                <td><Text color={deviceStatusColor(element.status)}>{element.status}</Text></td>
-
-            </tr>
-        )
-    }
-    )
-
-    if(task?.status === "COMPLETED"){
-        return (<>
-            <Box p={20} >
-                <Group position="apart">
-                    <Text fz="lg">Assigned Devices :</Text>    
-                </Group>
-                <Space h="xl" />
-                <Table fontSize="md">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Status</th>
-    
-                        </tr>
-                    </thead>
-                    <tbody>{completedRows}</tbody>
-                </Table>
-                <Space h="xl" />
-            </Box>
-    
-        </>)
-    }
 
     return (<>
-        <Box p={20} >
+        <Box pt={20} >
             <Group position="apart">
                 <Text fz="lg">Assigned Devices :</Text>
-                <TaskDevicesAssign task={task} handleAssign={handleAssign} />
+               {task.status !== "COMPLETED" && <TaskDevicesAssign task={task}/>}
 
             </Group>
+            <Space h="xl" />
 
-            <Table fontSize="md">
-                <thead>
-                    <tr>
-                        <th>
-                        </th>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Status</th>
+            <DataTable
+                minHeight={table.length === 0 ? 150 : 0}
+                verticalAlignment="center"
+                withBorder
+                borderRadius={5}
+                {...tableProp}
+                sortStatus={sortStatus}
+                onSortStatusChange={setSortStatus}
+                sortIcons={{
+                    sorted: <IconChevronUp size={14} />,
+                    unsorted: <IconSelector size={14} />,
+                }}
+                columns={[
+                    {
+                        accessor: 'id',
+                        title: 'Device No',
+                        sortable: true,
+                        render: ({ id }) =>
+                            <Anchor href={`/device/${id}`} target="_blank">
+                                {id}
+                            </Anchor>
 
-                    </tr>
-                </thead>
-                <tbody>{rows}</tbody>
-            </Table>
+                    },
+                    {
+                        accessor: 'name',
+                        sortable: true,
+                    },
+                    {
+                        accessor: 'status',
+                        sortable: true,
+                        render: ({ status }) => <Text color={deviceStatusColor(status)}>{status}</Text>
+                    },
+
+                ]}
+                records={table}
+            />
             <Space h="xl" />
             {
-                selection.length !== 0 && <Button color="red" onClick={() => handleUnassign()}>
+                selection.length !== 0 && <Button color="red" onClick={() => unAssignTask.mutate()}>
                     Remove
                 </Button>
             }

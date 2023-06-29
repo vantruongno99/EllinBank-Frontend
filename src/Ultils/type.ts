@@ -124,3 +124,8 @@ export interface UserInput {
     role? : string
 }
 
+export interface Stat {
+    numberOfDevices: number,
+     numberOfTasks: number, 
+     numberOfOngoingTasks: number
+}

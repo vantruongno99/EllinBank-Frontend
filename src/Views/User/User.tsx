@@ -4,17 +4,15 @@ import { useNavigate, useParams } from "react-router-dom"
 import { UserInfo } from "../../Ultils/type"
 import moment from "moment"
 import { Space, Input, Box, Button, Select, PasswordInput, Tabs, Tooltip, Group, ActionIcon } from "@mantine/core"
-import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
-import { IconCircleCheck, IconPlayerPlay, IconPlayerPause, IconTrash } from '@tabler/icons-react';
+import { IconTrash } from '@tabler/icons-react';
 import { showErorNotification, showSuccessNotification } from "../../Ultils/notification"
-
-
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 
 const User = () => {
-    const [user, setUser] = useState<UserInfo | null>(null)
     const navigate = useNavigate();
+    const queryClient = useQueryClient()
 
     const params = useParams();
 
@@ -25,51 +23,61 @@ const User = () => {
             email: "",
             role: ''
         },
-
-        // functions will be used to validate values at corresponding key
     });
+    const username = params.username
 
-    const form2 = useForm<{ password: string, confirmPassword: string }>({
-
-    });
-
-    const getUser = async () => {
-        const username = params.username
-        if (username !== undefined) {
-            try {
-                const res = await userService.getUser(username)
-                if (res) {
-                    form.setValues(res)
-                }
-            }
-            catch (e) {
-                console.log(e)
-            }
-        }
+    if (!username) {
+        return <>
+            404
+        </>
     }
 
-    const handleDelete = async () => {
-        const username = params.username
-        if (username !== undefined) {
-            try {
-                await userService.deleteUser(username)
-                navigate('/user')
+    const deleteUser = useMutation({
+        mutationFn: async () => {
+            return await userService.deleteUser(username)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['user'] })
+            navigate('/user')
+
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
             }
-            catch (e) {
-                if (e instanceof Error) {
-                    showErorNotification(e.message)
-                }
-                else {
-                    showErorNotification("Unknown Error")
-                }
+            else {
+                showErorNotification("Unknown Error")
             }
-        }
+        },
+    })
+
+    const { isLoading, error, isError, data } = useQuery({
+        queryKey: ['user', username],
+        queryFn: async () => {
+            const res = await userService.getUser(username)
+            return res
+        },
+        onSuccess: (data) => {
+            data && form.setValues(data)
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
+            }
+            else {
+                showErorNotification("Unknown Error")
+            }
+        },
+    })
+
+    if (isError) {
+        return <>
+            404
+        </>
     }
 
 
-    useEffect(() => {
-        getUser()
-    }, [])
+
     return (
         <>
             <Tabs defaultValue="detail">
@@ -109,7 +117,7 @@ const User = () => {
                             label="Delete this user"
                             color="red"
                         >
-                            <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={() => handleDelete()}>
+                            <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={() => deleteUser.mutate()}>
                                 <IconTrash />
                             </ActionIcon >
                         </Tooltip>

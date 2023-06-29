@@ -1,66 +1,79 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { DeviceInfo, TaskForm } from "../../Ultils/type"
-import { Space, Box, Tooltip, Table, Text, Button, Group, ActionIcon, Modal, createStyles, Checkbox } from "@mantine/core"
+import { Space, Box, Tooltip, Text, Button, Group, ActionIcon, Modal } from "@mantine/core"
 import { IconCirclePlus } from '@tabler/icons-react';
 import deviceService from "../../Services/device.service"
-
-const useStyles = createStyles((theme) => ({
-    rowSelected: {
-        backgroundColor:
-            theme.colorScheme === 'dark'
-                ? theme.fn.rgba(theme.colors[theme.primaryColor][7], 0.2)
-                : theme.colors[theme.primaryColor][0],
-    },
-}));
+import { IconChevronUp, IconSelector } from '@tabler/icons-react';
+import { DataTable, DataTableSortStatus } from 'mantine-datatable';
+import sortBy from 'lodash/sortBy';
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { showErorNotification } from "../../Ultils/notification";
+import taskService from "../../Services/task.service";
 
 
-const TaskDevicesAssign = ({ task, handleAssign }: { task: TaskForm | undefined, handleAssign: (taskId: number, selection: string[]) => Promise<void> }) => {
-    const { classes, cx } = useStyles();
-    const [selection, setSelection] = useState<string[]>([]);
+const TaskDevicesAssign = ({ task }: { task: TaskForm }) => {
+    const [table, setTable] = useState<DeviceInfo[]>([])
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'name', direction: 'asc' });
+    const [selection, setSelection] = useState<DeviceInfo[]>([]);
     const [opened, setOpened] = useState<boolean>(false)
-    const [devices, setDevices] = useState<DeviceInfo[]>([])
+    const queryClient = useQueryClient()
 
 
-    const assign = async () => {
-        const taskId = task?.id
-        if (taskId) {
-            handleAssign(taskId, selection)
+    useEffect(() => {
+        const data = sortBy(table, sortStatus.columnAccessor) as DeviceInfo[];
+        setTable(sortStatus.direction === 'desc' ? data.reverse() : data);
+    }, [sortStatus]);
+
+
+    const assignTask = useMutation({
+        mutationFn: async () => {
+            if (selection.length > 0) {
+                for (const device of selection) {
+                    await taskService.assignTask(task.id, device.id)
+                }
+            }
+
+            return
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['task', task.id] })
             setSelection([])
             setOpened(false)
-        }
-    }
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
+            }
+            else {
+                showErorNotification("Unknown Error")
+            }
+        },
+    })
 
-    const getAvailbleDevice: () => Promise<void> = async () => {
-        try {
-            const response: DeviceInfo[] | undefined = await deviceService.getAvaibleDeviceByTime()
-            response && setDevices(response)
-        }
-        catch (e) {
-            console.log(e)
-        }
-    }
+    const { isLoading, error, isError, data } = useQuery({
+        queryKey: ['device', 'availble', task.id],
+        initialData: [],
+        queryFn: async () => {
+            const res: DeviceInfo[] | undefined = await deviceService.getAvaibleDeviceByTime()
+            if (!res) {
+                throw new Error()
+            }
+            return res
+        },
+        enabled: opened,
+        onSuccess: (data) => {
+            setTable(data)
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
+            }
+            else {
+                showErorNotification("Unknown Error")
+            }
+        },
+    })
 
-
-    const rows = devices.map((item) => {
-        const selected = selection.includes(item.id);
-        return (
-            <tr key={item.id} className={cx({ [classes.rowSelected]: selected })}>
-                <td>
-                    <Checkbox
-                        checked={selection.includes(item.id)}
-                        onChange={() => toggleRow(item.id)}
-                        transitionDuration={0}
-                    />
-                </td>
-                <td>{item.id}</td>
-                <td>{item.name}</td>
-            </tr>
-        );
-    });
-    const toggleRow = (id: string) =>
-        setSelection((current) =>
-            current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
-        );
 
     return (<>
         <Box p={20} >
@@ -70,30 +83,47 @@ const TaskDevicesAssign = ({ task, handleAssign }: { task: TaskForm | undefined,
             >
                 <ActionIcon color="blue" size="lg" radius="xl" variant="light" onClick={() => {
                     setOpened(true)
-                    getAvailbleDevice()
                     setSelection([])
                 }}>
                     <IconCirclePlus />
                 </ActionIcon >
             </Tooltip>
 
-            <Modal title="Assign Sensors" opened={opened} onClose={() => setOpened(false)} withCloseButton={false} centered>
-                {rows.length !== 0 ? <Table fontSize="md" >
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>ID</th>
-                            <th>Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>{rows}</tbody>
-                </Table> : <Text color="red">
+            <Modal title="Avaialable Sensors" opened={opened} onClose={() => setOpened(false)} withCloseButton={false} centered>
+                {table.length !== 0 ? <DataTable
+                    minHeight={table.length === 0 ? 150 : 0}
+                    verticalAlignment="center"
+                    selectedRecords={ selection}
+                    onSelectedRecordsChange={ setSelection}
+                    withBorder
+                    borderRadius={5}
+                    sortStatus={sortStatus}
+                    onSortStatusChange={setSortStatus}
+                    sortIcons={{
+                        sorted: <IconChevronUp size={14} />,
+                        unsorted: <IconSelector size={14} />,
+                    }}
+                    columns={[
+                        {
+                            accessor: 'id',
+                            title: 'Device No',
+                            sortable: true
+                        },
+                        {
+                            accessor: 'name',
+                            sortable: true,
+                        },
+
+
+                    ]}
+                    records={table}
+                /> : <Text color="red">
                     No Device Avaiavle
                 </Text>
                 }
                 <Space h="xl" />
                 <Group position="right">
-                    <Button disabled={rows.length === 0} onClick={() => assign()}>
+                    <Button disabled={selection.length === 0} onClick={() => assignTask.mutate()}>
                         Assign
                     </Button>
                 </Group>

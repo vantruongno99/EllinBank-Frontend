@@ -192,7 +192,6 @@ const deleteTask = async (taskId: number): Promise<void> => {
 
 const getLogs = async (taskId: number): Promise<Log[]|undefined> => {
     try {
-        console.log(`${baseUrl}/${taskId}/logs`)
         const res = await axios.get(`${baseUrl}/${taskId}/logs`,
             config
         )

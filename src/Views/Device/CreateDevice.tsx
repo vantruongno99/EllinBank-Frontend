@@ -5,7 +5,8 @@ import deviceService from "../../Services/device.service";
 import { DeviceInput } from "../../Ultils/type";
 import { useError } from "../../Hook";
 import { useNavigate } from "react-router-dom";
-
+import { useMutation , useQueryClient } from "@tanstack/react-query";
+import { showErorNotification } from "../../Ultils/notification";
 
 const CreateDevice = () => {
     const errorMessage = useError()
@@ -20,27 +21,28 @@ const CreateDevice = () => {
         },
     });
 
-    const createDevice = async (data: DeviceInput) => {
-        try {
-            const res = await deviceService.createDevice(data)
+    const createDevice = useMutation({
+        mutationFn: async (input: DeviceInput) => {
+            return await deviceService.createDevice(input)
+        },
+        onSuccess: () => {
             navigate("/device")
-        }
-
-        catch (e) {
+        },
+        onError: (e) => {
             if (e instanceof Error) {
-                errorMessage.set(e.message)
+                showErorNotification(e.message)
             }
             else {
-                errorMessage.set("Unknown Error")
+                showErorNotification("Unknown Error")
             }
-        }
-    }
+        },
+    })
 
 
     return (
         <>
             <Box maw={320}>
-                <form onSubmit={form.onSubmit(createDevice)}>
+                <form onSubmit={form.onSubmit(data => createDevice.mutate(data))}>
                     <Input.Wrapper
                         
                         label="ID :" placeholder="ID"

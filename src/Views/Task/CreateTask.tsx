@@ -8,23 +8,17 @@ import { useError } from "../../Hook";
 import { useNavigate } from "react-router-dom";
 import { TaskInfo, TaskInput } from "../../Ultils/type";
 import { DeviceInfo } from "../../Ultils/type";
-
-const useStyles = createStyles((theme) => ({
-    rowSelected: {
-        backgroundColor:
-            theme.colorScheme === 'dark'
-                ? theme.fn.rgba(theme.colors[theme.primaryColor][7], 0.2)
-                : theme.colors[theme.primaryColor][0],
-    },
-}));
-
+import { DataTable } from 'mantine-datatable';
+import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { showErorNotification } from "../../Ultils/notification";
 
 const CreateTask = () => {
-    const [devices, setDevices] = useState<DeviceInfo[]>([])
-    const { classes, cx } = useStyles();
-    const [selection, setSelection] = useState<string[]>([]);
+    const [selection, setSelection] = useState<DeviceInfo[]>([]);
     const errorMessage = useError()
     const navigate = useNavigate();
+    const queryClient = useQueryClient()
+
 
     const form = useForm({
         validateInputOnChange: true,
@@ -38,67 +32,72 @@ const CreateTask = () => {
         },
     });
 
-    const newTask = async (data: TaskInput) => {
-        try {
-            const res: TaskInfo | undefined = await taskService.createTask(data)
-            if (res) {
-                selection.length !== 0 && selection.forEach(async (a) => {
-                    await taskService.assignTask(res.id, a);
 
-                })
-
-                navigate(`/task/${res.id}`)
+    const createTask = useMutation({
+        mutationFn: async (input: TaskInput) => {
+            const output = await taskService.createTask(input)
+            if (!output) {
+                throw new Error()
             }
-
-        }
-
-        catch (e) {
+            return output
+        },
+        onError: (e) => {
             if (e instanceof Error) {
-                errorMessage.set(e.message)
+                showErorNotification(e.message)
             }
             else {
-                errorMessage.set("Unknown Error")
+                showErorNotification("Unknown Error")
             }
-        }
+        },
+    })
+
+    const assignTask = useMutation({
+        mutationFn: async (input: {
+            taskId: number,
+            deviceId: string
+        }) => {
+            return await taskService.assignTask(input.taskId, input.deviceId)
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
+            }
+            else {
+                showErorNotification("Unknown Error")
+            }
+        },
+    })
+
+    const newTask = async (data: TaskInput) => {
+        const res = await createTask.mutateAsync(data)
+        selection.length !== 0 && selection.forEach(async (a) => {
+            await assignTask.mutateAsync({
+                taskId: res.id,
+                deviceId: a.id
+            })
+        })
+        navigate(`/task/${res.id}`)
     }
 
-    const getAvailbleDevice: () => Promise<void> = async () => {
-        try {
-            const response: DeviceInfo[] | undefined = await deviceService.getAvaibleDeviceByTime()
-            response && setDevices(response)
-        }
-        catch (e) {
-            console.log(e)
-        }
-    }
-
-    const rows = devices.map((item) => {
-        const selected = selection.includes(item.id);
-        return (
-            <tr key={item.id} className={cx({ [classes.rowSelected]: selected })}>
-                <td>
-                    <Checkbox
-                        checked={selection.includes(item.id)}
-                        onChange={() => toggleRow(item.id)}
-                        transitionDuration={0}
-                    />
-                </td>
-                <td>{item.id}</td>
-                <td>{item.name}</td>
-            </tr>
-        );
-    });
-
-    const toggleRow = (id: string) =>
-        setSelection((current) =>
-            current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
-        );
-
-    useEffect(() => {
-        getAvailbleDevice()
-    }
-        , [])
-
+    const deviceQuery = useQuery({
+        queryKey: ['device', 'available'],
+        initialData: [],
+        queryFn: async () => {
+            const res: DeviceInfo[] | undefined = await deviceService.getAvaibleDeviceByTime()
+            if (!res) {
+                throw new Error()
+            }
+            return res
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
+            }
+            else {
+                showErorNotification("Unknown Error")
+            }
+        },
+    })
 
     return (
         <>
@@ -155,18 +154,25 @@ const CreateTask = () => {
                 </Grid.Col>
 
                 <Grid.Col span={7}>
-                    <Title order={3}>Available Sensors</Title>
-                    <Space h="xl" />
-                    <Table fontSize="md" withBorder >
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>ID</th>
-                                <th>Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>{rows}</tbody>
-                    </Table>
+                    <Box maw={400}>
+                        <Title order={3}>Available Sensors</Title>
+                        <Space h="xl" />
+                        <Space h="lg" />
+                        <DataTable
+                            minHeight={deviceQuery.data.length === 0 ? 150 : 0}
+                            verticalAlignment="center"
+                            withBorder
+                            borderRadius={5}
+                            records={deviceQuery.data}
+                            selectedRecords={selection}
+                            onSelectedRecordsChange={setSelection}
+                            columns={[
+                                { accessor: 'id' },
+                                { accessor: 'name' },
+                            ]}
+                        />
+                    </Box>
+
                 </Grid.Col>
             </Grid>
 

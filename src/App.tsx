@@ -1,12 +1,15 @@
-import { MantineProvider, Text } from '@mantine/core';
+import { MantineProvider } from '@mantine/core';
 import { Layout } from './Layout';
 import React, { Suspense } from 'react'
 import { createBrowserRouter, RouterProvider, redirect } from "react-router-dom";
 import { innerRoutes, outerRoutes } from './Routes';
 import { Notifications } from '@mantine/notifications';
 import { Loader } from '@mantine/core';
-import { ModalsProvider } from '@mantine/modals';
 import authservice from './Services/auth.service';
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
 export default function App() {
 
@@ -42,6 +45,9 @@ export default function App() {
   ]
   const router = createBrowserRouter(routes)
 
+  const queryClient = new QueryClient()
+
+
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS
       theme={{
@@ -61,10 +67,12 @@ export default function App() {
         },
       }}
     >
-      <Notifications position="top-right"/>
-      <Suspense fallback={<Loader />}>
-        <RouterProvider router={router} />
-      </Suspense>
+      <Notifications position="top-right" />
+      <QueryClientProvider client={queryClient}>
+        <Suspense fallback={<Loader />}>
+          <RouterProvider router={router} />
+        </Suspense>
+      </QueryClientProvider>
     </MantineProvider>
   );
 }

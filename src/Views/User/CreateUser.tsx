@@ -1,11 +1,10 @@
-import React from "react"
 import { useForm, isEmail, matchesField, isNotEmpty } from '@mantine/form';
-import { NumberInput, TextInput, Button, Box, Space, Input, PasswordInput ,Select} from '@mantine/core';
+import { TextInput, Button, Box, Space, Input, PasswordInput, Select } from '@mantine/core';
 import userService from "../../Services/user.service";
-import { UserInput } from "../../Ultils/type";
 import { useError } from "../../Hook";
 import { useNavigate } from "react-router-dom";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { showErorNotification } from "../../Ultils/notification";
 
 interface UserRe {
     confirmPassword: string,
@@ -19,6 +18,8 @@ interface UserRe {
 const CreateUser = () => {
     const errorMessage = useError()
     const navigate = useNavigate();
+    const queryClient = useQueryClient()
+
 
     const form = useForm({
         initialValues: { username: '', password: '', email: '', confirmPassword: '', role: '' },
@@ -34,22 +35,25 @@ const CreateUser = () => {
     });
 
 
-    const createUser = async (input: UserRe) => {
-        try {
+    const createUser = useMutation({
+        mutationFn: async (input: UserRe) => {
             const { confirmPassword, ...info } = input
-            await userService.createUser(info)
-            navigate("/user")
-        }
+            return await userService.createUser(info)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['user'] })
+            navigate('/user')
 
-        catch (e) {
+        },
+        onError: (e) => {
             if (e instanceof Error) {
-                errorMessage.set(e.message)
+                showErorNotification(e.message)
             }
             else {
-                errorMessage.set("Unknown Error")
+                showErorNotification("Unknown Error")
             }
-        }
-    }
+        },
+    })
 
 
 
@@ -57,7 +61,7 @@ const CreateUser = () => {
     return (
         <>
             <Box maw={320}>
-                <form onSubmit={form.onSubmit(createUser)}>
+                <form onSubmit={form.onSubmit(data => createUser.mutate(data))}>
                     <Input.Wrapper
                         label="Username :" placeholder="Username"
                     >
@@ -86,10 +90,10 @@ const CreateUser = () => {
                         label="Role :" placeholder="role"
                     >
                         <Select data={[
-                                { value: 'admin', label: 'Admin' },
-                                { value: 'user', label: 'User' },
-                            ]}
-                                 {...form.getInputProps('role')} size="md" />
+                            { value: 'admin', label: 'Admin' },
+                            { value: 'user', label: 'User' },
+                        ]}
+                            {...form.getInputProps('role')} size="md" />
                     </Input.Wrapper>
                     <Space h="md" />
                     <Button type="submit" mt="sm">
@@ -102,5 +106,6 @@ const CreateUser = () => {
         </>
     )
 }
+
 
 export default CreateUser

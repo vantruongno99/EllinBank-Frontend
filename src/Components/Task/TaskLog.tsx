@@ -11,46 +11,39 @@ import {
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import Boost from 'highcharts/modules/boost';
+import { useQuery } from "@tanstack/react-query";
 //@ts-ignore
 Boost(Highcharts);
 
 
-const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
-    const [data, setData] = useState<Log[]>([])
-    const [progress, setProgress] = useState<number>(0)
+const TaskLog = ({ task }: { task: TaskForm }) => {
+    const [checked, setChecked] = useState<boolean>(false)
     const [select, setSelect] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(false)
-    const timeout = useRef<any>(null);
 
 
-    const getLog = async () => {
-        if (task?.id) {
-            try {
-                if (!select) {
-                    return
-                }
-                setLoading(true)
-                const res = await taskService.getLogsByType(task?.id, select)
-                if (!res) {
-                    showErorNotification("No data")
-                    return
-                }
-                setData(res)
-                console.log(res.length)
+    const { isLoading, error, isError, data } = useQuery({
+        queryKey: ['task', select],
+        initialData: [],
+        queryFn: async () => {
+            const res = await taskService.getLogsByType(task?.id, select as string)
+            if (!res) {
+                throw new Error()
             }
-            catch (e) {
-                if (e instanceof Error) {
-                    showErorNotification(e.message)
-                }
-                else {
-                    showErorNotification("Unknown Error")
-                }
+            return res
+        },
+        enabled: !!select,
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
             }
-            finally {
-                setLoading(false)
+            else {
+                showErorNotification("Unknown Error")
             }
-        }
-    }
+        },
+        ...(checked && { refetchInterval: 5 * 60 * 1000 })
+    })
+
+
 
     const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>
         arr.reduce((groups, item) => {
@@ -76,7 +69,6 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
         chart: {
             height: 500,
             zoomType: 'x',
-            backgroundColor: "transparent",
             panning: true,
             panKey: 'shift',
             scrollablePlotArea: {
@@ -124,17 +116,6 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
         series: input,
     }
 
-    useEffect(() => {
-        select && getLog()
-    }, [progress, select])
-
-    const handleOkBtnClick = (event: boolean): void => {
-        if (event) {
-            timeout.current = window.setInterval(() => setProgress(progress => progress + 1), 1000 * 60 * 15);
-        } else {
-            clearInterval(timeout.current);
-        }
-    }
 
 
     return (
@@ -154,10 +135,12 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
                     />
                     <Space h="sm" />
                     {task?.status !== "COMPLETED" && <Checkbox
-                        onChange={(event) => handleOkBtnClick(event.currentTarget.checked)}
+                        checked={checked} onChange={(event) => setChecked(event.currentTarget.checked)}
                         label="Auto Refresh"
                     />}
                 </Box>
+                {isLoading && <> <Loader mt="1rem" /></>}
+
                 {data.length > 0 &&
                     <CSVLink
                         data={data}
@@ -173,14 +156,20 @@ const TaskLog = ({ task }: { task: TaskForm | undefined }) => {
                         </Tooltip>
                     </CSVLink>}
             </Group>
+            <Space h="sm" />
+            
 
-
-            {loading && <> <Loader mt="1rem" /></>}
-
-            {data.length > 0 && !loading && <HighchartsReact
-                highcharts={Highcharts}
-                options={options}
-            />}
+            {data.length > 0 &&
+                <Box
+                    sx={(theme) => ({
+                        borderRadius: theme.radius.md,
+                    })}
+                >
+                    <HighchartsReact
+                        highcharts={Highcharts}
+                        options={options}
+                    />
+                </Box>}
         </>
     )
 }

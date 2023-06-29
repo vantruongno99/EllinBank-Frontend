@@ -1,38 +1,68 @@
-import  { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import deviceService from "../../Services/device.service"
 import { useParams } from "react-router-dom"
-import { DeviceForm, TaskInfo } from "../../Ultils/type"
-import { Tabs} from "@mantine/core"
+import { DeviceForm, DeviceInfo, TaskInfo } from "../../Ultils/type"
+import { Tabs } from "@mantine/core"
 import moment from "moment"
 import { DeviceDetail, DeviceTasks, DeviceSensors } from "../../Components/Device"
-
+import { useQuery } from "@tanstack/react-query";
+import { Loader } from '@mantine/core';
+import { showErorNotification } from "../../Ultils/notification"
 
 
 const Device = () => {
     const [device, setDevice] = useState<DeviceForm | null>(null)
     const [tasks, setTasks] = useState<TaskInfo[]>([])
     const params = useParams();
-    const getDevice = async () => {
-        const id = params.id
-        if (id !== undefined) {
-            try {
-                const res = await deviceService.getDevice(id)
-                if (res) {
-                    setDevice(res)
-                    const { Task, ...detail } = res
-                    setTasks(res.Task.map(a => a.Task))
-                    setDevice({ ...detail, updateUTC: moment(detail.updateUTC).format('DD/MM/yyyy HH:mm') })
-                }
-            }
-            catch (e) {
-                console.log(e)
-            }
-        }
+    const id = params.id
+
+    if (!id) {
+        return <div>
+            404
+        </div>
     }
 
-    useEffect(() => {
-        getDevice()
-    }, [])
+    const { isLoading, error, isError, data} = useQuery({
+        queryKey: ['device', id],
+        initialData: undefined,
+        queryFn: async () => {
+            const res = await deviceService.getDevice(id)
+            if(!res){
+                throw new Error()
+            }
+            return res
+        },
+        onSuccess: (data) => {
+            const { Task, ...detail } = data
+            setTasks(data.Task.map(a => a.Task))
+            setDevice({ ...detail, updateUTC: moment(detail.updateUTC).format('DD/MM/yyyy HH:mm') })
+
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
+            }
+            else {
+                showErorNotification("Unknown Error")
+            }
+        },
+    })
+
+
+
+    if (isLoading) {
+        return <Loader />
+    }
+
+
+    if (!device) {
+        return <>
+            404
+        </>
+    }
+
+
+
     return (
         <>
             <Tabs defaultValue="detail">
@@ -44,9 +74,8 @@ const Device = () => {
                 <Tabs.Panel value="tasks">
                     <DeviceTasks tasks={tasks} />
                 </Tabs.Panel>
-
                 <Tabs.Panel value="detail">
-                    < DeviceDetail device={device} getDevice={getDevice} />
+                    < DeviceDetail device={device} />
                 </Tabs.Panel>
                 <Tabs.Panel value="sensors">
                     <DeviceSensors device={device} />
