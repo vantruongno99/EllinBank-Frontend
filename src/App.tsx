@@ -10,6 +10,8 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
+import { ModalsProvider } from '@mantine/modals';
+
 
 export default function App() {
 
@@ -67,12 +69,14 @@ export default function App() {
         },
       }}
     >
-      <Notifications position="top-right" />
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback={<Loader />}>
-          <RouterProvider router={router} />
-        </Suspense>
-      </QueryClientProvider>
+      <ModalsProvider>
+        <Notifications position="top-right" />
+        <QueryClientProvider client={queryClient}>
+          <Suspense fallback={<Loader />}>
+            <RouterProvider router={router} />
+          </Suspense>
+        </QueryClientProvider>
+      </ModalsProvider>
     </MantineProvider>
   );
 }

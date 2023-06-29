@@ -8,6 +8,7 @@ import { deviceStatusColor } from "../../Ultils/colors"
 import { showSuccessNotification, showErorNotification } from "../../Ultils/notification"
 import { useForm } from '@mantine/form';
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { modals } from '@mantine/modals';
 
 const DeviceDetail = ({ device }: { device: DeviceForm }) => {
     const navigate = useNavigate();
@@ -114,6 +115,23 @@ const DeviceDetail = ({ device }: { device: DeviceForm }) => {
     })
 
 
+    const openDeleteModal = () =>
+        modals.openConfirmModal({
+            title: 'Delete this device',
+            centered: true,
+            children: (
+                <p>
+                    Are you sure you want to delete this device
+
+                </p>
+            ),
+            labels: { confirm: 'Delete device', cancel: "No don't delete it" },
+            confirmProps: { color: 'red' },
+            onConfirm: () => deleteDevice.mutate(),
+        });
+
+
+
 
 
 
@@ -150,7 +168,7 @@ const DeviceDetail = ({ device }: { device: DeviceForm }) => {
                     label="Remove this Device"
                     color="red"
                 >
-                    <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={() => deleteDevice.mutate()}>
+                    <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={openDeleteModal}>
                         <IconTrash />
                     </ActionIcon >
                 </Tooltip>

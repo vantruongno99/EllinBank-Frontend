@@ -9,6 +9,7 @@ import { useForm } from '@mantine/form';
 import { taskStatusColor } from "../../Ultils/colors"
 import { showErorNotification, showSuccessNotification } from "../../Ultils/notification"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { modals } from '@mantine/modals';
 
 const TaskDetail = ({ task }: { task: TaskForm }) => {
     const navigate = useNavigate();
@@ -133,6 +134,21 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
         },
     })
 
+    const openDeleteModal = () =>
+        modals.openConfirmModal({
+            title: 'Delete this task',
+            centered: true,
+            children: (
+                <p>
+                    Are you sure you want to delete this task
+
+                </p>
+            ),
+            labels: { confirm: 'Delete task', cancel: "No don't delete it" },
+            confirmProps: { color: 'red' },
+            onConfirm: () => deleteTask.mutate(),
+        });
+
 
 
     const menuOptions = () => {
@@ -166,7 +182,7 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
                     label="Delete this task"
                     color="red"
                 >
-                    <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={() => deleteTask.mutate()}>
+                    <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={openDeleteModal}>
                         <IconTrash />
                     </ActionIcon >
                 </Tooltip>

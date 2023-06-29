@@ -8,9 +8,27 @@ import { useForm } from '@mantine/form';
 import { IconTrash } from '@tabler/icons-react';
 import { showErorNotification, showSuccessNotification } from "../../Ultils/notification"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { modals } from '@mantine/modals';
 
 
 const User = () => {
+
+    const openDeleteModal = () =>
+        modals.openConfirmModal({
+            title: 'Delete this account',
+            centered: true,
+            children: (
+                <p>
+                    Are you sure you want to delete this account
+
+                </p>
+            ),
+            labels: { confirm: 'Delete account', cancel: "No don't delete it" },
+            confirmProps: { color: 'red' },
+            onConfirm: () => deleteUser.mutate(),
+        });
+
+
     const navigate = useNavigate();
     const queryClient = useQueryClient()
 
@@ -117,7 +135,7 @@ const User = () => {
                             label="Delete this user"
                             color="red"
                         >
-                            <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={() => deleteUser.mutate()}>
+                            <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={openDeleteModal}>
                                 <IconTrash />
                             </ActionIcon >
                         </Tooltip>
