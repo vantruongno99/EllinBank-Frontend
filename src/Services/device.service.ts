@@ -44,6 +44,23 @@ const getDevice = async (deviceId: string): Promise<DeviceInfo | undefined> => {
     }
 }
 
+const getDeviceNameById = async (deviceId: string): Promise<string | undefined> => {
+    try {
+        const res = await axios.get(`${baseUrl}/${deviceId}`,
+            config
+        )
+        return res.data
+    }
+    catch (error: any | AxiosError) {
+        if (axios.isAxiosError(error)) {
+            AxiosHandleResponse(error)
+        } else {
+            console.log(error)
+
+        }
+    }
+}
+
 const createDevice = async (newDevice: DeviceInput): Promise<DeviceInfo | undefined> => {
     try {
         const res = await axios.post(`${baseUrl}`, newDevice,
@@ -200,7 +217,8 @@ const deviceService = {
     readSensor,
     deleteDevice,
     pauseDevice,
-    resumeDevice
+    resumeDevice,
+    getDeviceNameById
 }
 
 export default deviceService

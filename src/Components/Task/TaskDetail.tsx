@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import taskService from "../../Services/task.service"
 import { useNavigate } from "react-router-dom"
 import { EditTaskInput, TaskInfo, TaskForm } from "../../Ultils/type"
-import { Space, Input, Grid, Box, Title, NumberInput, Text, Button, Menu, Group, ActionIcon, Badge, Tooltip } from "@mantine/core"
+import { Space, Input, Grid, Box, Title, NumberInput, Text, Button, Menu, Group, ActionIcon, Badge, Tooltip, Textarea } from "@mantine/core"
 import { IconCircleCheck, IconPlayerPlay, IconPlayerPause, IconTrash } from '@tabler/icons-react';
 import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
@@ -40,7 +40,8 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
                 endTime: new Date(data.endTime),
                 id: data.id,
                 name: data.name,
-                logPeriod: data.logPeriod
+                logPeriod: data.logPeriod,
+                comment: data.comment
             }
             return await taskService.updateTask(input)
         },
@@ -83,7 +84,7 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['task'] })
-            queryClient.removeQueries({ queryKey: ['task',task.id] })
+            queryClient.removeQueries({ queryKey: ['task', task.id] })
             showSuccessNotification(`Task ${form.values.name} has been deleted`)
             navigate('/task')
         },
@@ -102,7 +103,7 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
             return await taskService.resumeTask(task.id)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['task',task.id] })
+            queryClient.invalidateQueries({ queryKey: ['task', task.id] })
             showSuccessNotification(`Task ${form.values.name} has been resumed`)
         },
         onError: (e) => {
@@ -121,7 +122,7 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
             return await taskService.pauseTask(task.id)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['task',task.id] })
+            queryClient.invalidateQueries({ queryKey: ['task', task.id] })
             showSuccessNotification(`Task ${form.values.name} has been paused`)
         },
         onError: (e) => {
@@ -252,7 +253,7 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
                         <Text fw={500}>Status : </Text>
                         <Menu trigger="hover" position="right-start" openDelay={100} closeDelay={400}>
                             <Menu.Target>
-                                <Badge size="lg" variant="dot" color={taskStatusColor(form.values.status)}>{form.values.status}</Badge >
+                                <Badge size="lg" variant="light" color={taskStatusColor(form.values.status)}>{form.values.status}</Badge >
                             </Menu.Target>
                             {menuOptions()}
                         </Menu>
@@ -345,6 +346,28 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
                             />
                         </Input.Wrapper>
                     </Box>
+                </Grid.Col>
+
+            </Grid>
+            <Space h="xl" />
+            <Space h="xl" />
+            <Title order={3} color="blue">COMMENT</Title>
+            <Space h="xl" />
+
+            <Grid gutter='md' >
+                <Grid.Col span={8}>
+                    <Input.Wrapper
+
+                    >
+                        <Textarea
+
+                            size="md"
+                            {...form.getInputProps("comment")}
+                            disabled={form.values.status === "COMPLETED"}
+                            autosize
+                            minRows={3}
+                        />
+                    </Input.Wrapper>
                 </Grid.Col>
 
             </Grid>

@@ -18,6 +18,7 @@ export interface DeviceForm extends DeviceInput {
     CO2_SN: string | null
     PUMP_SN: string | null
     updateUTC: string,
+    lastCheck? : string,
     status : string,
     assigned : boolean
 } 
@@ -34,7 +35,8 @@ export interface EditTaskInput  {
     id: number,
     endTime: Date,
     name: string,
-    logPeriod: number
+    logPeriod: number,
+    comment : string,
 }
 
 export type TaskInput = {
@@ -51,9 +53,10 @@ export interface TaskInfo extends TaskInput {
     completedUTC: Date | null,
     createUser: string,
     completeUser: string | null,
+    comment : string,
     status: string
     Device: {
-        Device: TaskInfo
+        Device: DeviceInfo
     }[]
 }
 
@@ -63,18 +66,10 @@ export interface TaskForm extends TaskInput {
     completedUTC: Date | null,
     createUser: string,
     completeUser: string | null,
-    status: string
-}
+    status: string,
+    comment : string,
 
-export interface DeviceForm extends DeviceInput {
-    CH4_SN: string | null
-    O2_SN: string | null
-    CO2_SN: string | null
-    PUMP_SN: string | null
-    Task?: any,
-    updateUTC: string
 }
-
 
 
 export type CustomError = {
@@ -114,14 +109,16 @@ export interface UserInfo {
     id : number ,
     username : string,
     role : string,
-    email : string
+    email : string,
+    company : string
 }
 
 export interface UserInput {
     username : string,
     password : string,
     email : string,
-    role? : string
+    role? : string,
+    company : string,
 }
 
 export interface Stat {

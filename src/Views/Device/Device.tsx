@@ -35,7 +35,12 @@ const Device = () => {
         onSuccess: (data) => {
             const { Task, ...detail } = data
             setTasks(data.Task.map(a => a.Task))
-            setDevice({ ...detail, updateUTC: moment(detail.updateUTC).format('DD/MM/yyyy HH:mm') })
+            setDevice(
+                { ...detail, 
+                    updateUTC: moment(detail.updateUTC).format('DD/MM/yyyy HH:mm'),
+                    lastCheck: moment(detail.lastCheck).format('DD/MM/yyyy HH:mm')
+                 })
+            console.log(data)
 
         },
         onError: (e) => {

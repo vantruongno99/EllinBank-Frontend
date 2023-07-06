@@ -12,7 +12,8 @@ const Device = () => {
         initialValues: {
             id: "",
             username: "",
-            email: ""
+            email: "",
+            company: ""
         },
         validate: {
             username: (value) => (value.length < 5 ? 'Name must have at least 5 letters' : null),
@@ -124,6 +125,7 @@ const Device = () => {
                                 <PasswordInput   {...form2.getInputProps('confirmPassword')} size="md" />
                             </Input.Wrapper>
                         </Box>
+
                         <Space h="xl" />
                         {errorMessage.value && <>
                             <Text color="red">
@@ -170,6 +172,14 @@ const Device = () => {
                                 ]}
                                 {...form.getInputProps('role')} size="md" />
                         </Input.Wrapper>
+
+                        <Input.Wrapper
+                            label="Company :"
+                            mt="1rem"
+                        >
+                            <Input   {...form.getInputProps('company')} size="md" disabled />
+                        </Input.Wrapper>
+
                     </Box>
                 </Tabs.Panel>
 

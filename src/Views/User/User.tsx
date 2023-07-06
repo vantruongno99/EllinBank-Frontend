@@ -39,7 +39,8 @@ const User = () => {
             id: 0,
             username: "",
             email: "",
-            role: ''
+            role: '',
+            company : ''
         },
     });
     const username = params.username
@@ -55,7 +56,6 @@ const User = () => {
             return await userService.deleteUser(username)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['user'] })
             navigate('/user')
 
         },
@@ -173,6 +173,14 @@ const User = () => {
                                     { value: 'user', label: 'User' },
                                 ]}
                                 {...form.getInputProps('role')} size="md" />
+                        </Input.Wrapper>
+
+                        <Input.Wrapper
+                            label="Company :"
+                            mt="1rem"
+
+                        >
+                            <Input   {...form.getInputProps('company')} size="md" disabled />
                         </Input.Wrapper>
                     </Box>
                 </Tabs.Panel>

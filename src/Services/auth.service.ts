@@ -33,6 +33,7 @@ async function loging(loginDetail: LoginDetail) {
 const logout = async () => {
     Cookies.remove('username')
     Cookies.remove('token')
+    Cookies.remove('role')
     window.location.href = '/login'
 
 }

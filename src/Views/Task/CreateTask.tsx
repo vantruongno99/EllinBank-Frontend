@@ -27,7 +27,7 @@ const CreateTask = () => {
         validate: {
             name: (value) => (value.length < 5 ? 'Name must have at least 5 letters' : null),
             logPeriod: (value) => (value < 0 ? 'You must be at least 18 to register' : null),
-            startTime: (value) => (new Date(value) < new Date ? "Date must be in future" : null),
+            startTime: (value) => (new Date (new Date(value).getTime() + 5 * 60 * 1000 )< new Date ? "Date must be in future" : null),
             endTime: (value, values) => (new Date(value) < new Date(values.startTime) ? "End Date must greater than Start Date" : null),
         },
     });

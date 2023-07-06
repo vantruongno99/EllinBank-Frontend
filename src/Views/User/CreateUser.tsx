@@ -11,7 +11,8 @@ interface UserRe {
     username: string,
     password: string,
     email: string,
-    role: string
+    role: string,
+    company: string
 }
 
 
@@ -22,14 +23,16 @@ const CreateUser = () => {
 
 
     const form = useForm({
-        initialValues: { username: '', password: '', email: '', confirmPassword: '', role: '' },
+        initialValues: { username: '', password: '', email: '', confirmPassword: '', role: '', company: '' },
         // functions will be used to validate values at corresponding key
         validate: {
             username: (value) => (value.length < 5 ? 'Name must have at least 5 letters' : null),
             password: (value) => (value.length < 8 ? 'Password must have at least 5 letters' : null),
             confirmPassword: matchesField('password', 'Passwords are not the same'),
             email: isEmail('Invalid email'),
-            role: isNotEmpty('Select role')
+            role: isNotEmpty('Select role'),
+            company: isNotEmpty('Select role')
+
 
         },
     });
@@ -94,6 +97,12 @@ const CreateUser = () => {
                             { value: 'user', label: 'User' },
                         ]}
                             {...form.getInputProps('role')} size="md" />
+                    </Input.Wrapper>
+                    <Input.Wrapper
+                        mt="1rem"
+                        label="Company :" placeholder="Company"
+                    >
+                        <TextInput {...form.getInputProps('company')} />
                     </Input.Wrapper>
                     <Space h="md" />
                     <Button type="submit" mt="sm">

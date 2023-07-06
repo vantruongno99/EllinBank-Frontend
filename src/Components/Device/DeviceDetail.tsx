@@ -19,6 +19,7 @@ const DeviceDetail = ({ device }: { device: DeviceForm }) => {
             id: "",
             name: "",
             updateUTC: "",
+            lastCheck: "",
             CH4_SN: "",
             PUMP_SN: "",
             CO2_SN: "",
@@ -213,6 +214,15 @@ const DeviceDetail = ({ device }: { device: DeviceForm }) => {
 
                 </Grid.Col>
                 <Grid.Col span={4}>
+                <Box maw={440} >
+                        <Input.Wrapper
+
+                            label="Last Check :"
+                        >
+                            <Input  {...form.getInputProps('lastCheck')} disabled size="md" />
+                        </Input.Wrapper>
+                    </Box>
+
                 </Grid.Col>
                 <Grid.Col span={4}>
                 </Grid.Col>
@@ -221,7 +231,7 @@ const DeviceDetail = ({ device }: { device: DeviceForm }) => {
                         <Text fw={500}>Status : </Text>
                         <Menu trigger="hover" openDelay={100} closeDelay={400}>
                             <Menu.Target>
-                                <Badge size="lg" variant="dot" color={deviceStatusColor(form.values.status)}>{form.values.status}</Badge >
+                                <Badge size="lg" variant="light" color={deviceStatusColor(form.values.status)}>{form.values.status}</Badge >
                             </Menu.Target>
                             {menuOptions()}
                         </Menu>

@@ -19,7 +19,8 @@ const intialValue ={
     completedUTC: null,
     createUser: '',
     completeUser: null,
-    status: ''
+    status: '',
+    comment: ''
 }
 
 const Task = () => {
@@ -56,7 +57,7 @@ const Task = () => {
                 createdUTC: new Date(detail.createdUTC),
                 completedUTC: detail.completedUTC ? new Date(detail.completedUTC) : null
             }
-            setDevices(data.Device.map((a: { Device: any }) => a.Device))
+            setDevices(data.Device.map(a => a.Device))
             setTask(task)
         },
         onError: (e) => {
