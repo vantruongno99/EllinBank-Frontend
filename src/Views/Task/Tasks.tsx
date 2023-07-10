@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import taskService from "../../Services/task.service";
 import { TaskInfo } from "../../Ultils/type"
-import { Anchor, Button, Group, Space, Tooltip, Text, Loader } from '@mantine/core'
+import { Anchor, Button, Group, Space, Tooltip, Text, Loader, ActionIcon } from '@mantine/core'
 import { useLocation, useNavigate } from 'react-router-dom';
 import moment from "moment";
 import {
@@ -13,6 +13,7 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { useQuery } from "@tanstack/react-query";
 import { showErorNotification } from "../../Ultils/notification";
+import { IconCirclePlus } from '@tabler/icons-react';
 
 
 
@@ -48,9 +49,17 @@ const Tasks = () => {
 
     return (
         <> <Group position="right">
-            <Button onClick={() => navigate(`${location.pathname}/new`)}>
-                New Task
-            </Button>
+            <Tooltip
+                label="Create new Task"
+                color="blue"
+                position="left"
+            >
+                <ActionIcon color="blue" size="lg" radius="xl" variant="light" onClick={() => {
+                    navigate(`${location.pathname}/new`)
+                }}>
+                    <IconCirclePlus />
+                </ActionIcon >
+            </Tooltip>
         </Group>
             <Space h="xl" />
             <TaskTable data={data} isLoading={isLoading} />

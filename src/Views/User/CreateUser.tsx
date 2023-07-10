@@ -105,7 +105,7 @@ const CreateUser = () => {
                         <TextInput {...form.getInputProps('company')} />
                     </Input.Wrapper>
                     <Space h="md" />
-                    <Button type="submit" mt="sm">
+                    <Button type="submit" mt="sm" disabled={createUser.isLoading}>
                         Save
                     </Button>
                     <Space h="md" />

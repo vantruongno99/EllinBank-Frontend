@@ -24,7 +24,6 @@ const Device = () => {
 
     const { isLoading, error, isError, data} = useQuery({
         queryKey: ['device', id],
-        initialData: undefined,
         queryFn: async () => {
             const res = await deviceService.getDevice(id)
             if(!res){
@@ -33,15 +32,14 @@ const Device = () => {
             return res
         },
         onSuccess: (data) => {
+            console.log(data)
             const { Task, ...detail } = data
             setTasks(data.Task.map(a => a.Task))
             setDevice(
                 { ...detail, 
                     updateUTC: moment(detail.updateUTC).format('DD/MM/yyyy HH:mm'),
-                    lastCheck: moment(detail.lastCheck).format('DD/MM/yyyy HH:mm')
+                    lastCheck: detail.lastCheck === null ? undefined : moment(detail.lastCheck).format('DD/MM/yyyy HH:mm')
                  })
-            console.log(data)
-
         },
         onError: (e) => {
             if (e instanceof Error) {

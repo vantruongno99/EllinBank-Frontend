@@ -301,7 +301,7 @@ const DeviceDetail = ({ device }: { device: DeviceForm }) => {
 
             </Grid>
             <Space h="xl" />
-            <Button type="submit" mt="sm">
+            <Button disabled={updateDevice.isLoading} type="submit" mt="sm">
                 Save Changes
             </Button>
         </form>

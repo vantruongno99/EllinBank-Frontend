@@ -58,7 +58,7 @@ const CreateDevice = () => {
                     </Input.Wrapper>
 
                     <Space h="md" />
-                    <Button type="submit" mt="sm">
+                    <Button type="submit" disabled={createDevice.isLoading} mt="sm">
                         Save
                     </Button>
                     <Space h="md" />

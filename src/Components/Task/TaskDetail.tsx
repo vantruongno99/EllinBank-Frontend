@@ -373,7 +373,7 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
             </Grid>
             <Space h="xl" />
             {form.values.status !== "COMPLETED" &&
-                <Button type="submit" mt="sm">
+                <Button type="submit" mt="sm" disabled={updateTask.isLoading}>
                     Save Changes
                 </Button>
             }

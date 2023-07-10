@@ -10,7 +10,6 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { showErorNotification } from "../../Ultils/notification";
 import taskService from "../../Services/task.service";
 
-
 const TaskDevicesAssign = ({ task }: { task: TaskForm }) => {
     const [table, setTable] = useState<DeviceInfo[]>([])
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'name', direction: 'asc' });

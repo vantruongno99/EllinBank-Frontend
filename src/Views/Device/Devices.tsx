@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import deviceService from "../../Services/device.service"
 import { DeviceInfo } from "../../Ultils/type"
-import { Anchor, Button, Group, Space, Text } from '@mantine/core'
+import { ActionIcon, Anchor, Button, Group, Space, Text, Tooltip } from '@mantine/core'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { deviceStatusColor } from "../../Ultils/colors"
 import { IconChevronUp, IconSelector } from '@tabler/icons-react';
@@ -9,6 +9,7 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { useQuery } from "@tanstack/react-query";
 import { showErorNotification } from "../../Ultils/notification";
+import { IconCirclePlus } from '@tabler/icons-react';
 
 
 const Devices = () => {
@@ -20,7 +21,7 @@ const Devices = () => {
         initialData: [],
         queryFn: async () => {
             const res: DeviceInfo[] | undefined = await deviceService.getAllDevices()
-            if(!res){
+            if (!res) {
                 throw new Error()
             }
             return res
@@ -40,9 +41,17 @@ const Devices = () => {
     return (
         <>
             <Group position="right">
-                <Button onClick={() => navigate(`${location.pathname}/new`)}>
-                    New Device
-                </Button>
+                <Tooltip
+                    label="Add new Device"
+                    color="blue"
+                    position="left"
+                >
+                    <ActionIcon color="blue" size="lg" radius="xl" variant="light" onClick={() => {
+                       navigate(`${location.pathname}/new`)
+                    }}>
+                        <IconCirclePlus />
+                    </ActionIcon >
+                </Tooltip>
             </Group>
             <Space h="xl" />
             <DeviceTable data={data} isLoading={isLoading} />

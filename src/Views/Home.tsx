@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react"
 import {  IconDevices, IconBook2 } from '@tabler/icons-react';
 import statService from "../Services/stat.service";
 import { StatsGridIcons } from "../Components/Group";
+import { useQuery} from "@tanstack/react-query";
+import { showErorNotification } from "../Ultils/notification";
 
 interface StatDetail {
     name: string,
@@ -12,38 +14,39 @@ interface StatDetail {
 
 
 const Home = () => {
-    const [data, setData] = useState<StatDetail[]>([])
+    const [stat, setStat] = useState<StatDetail[]>([])
 
 
-    const getStat = async () => {
-        try {
+    const { isLoading, error, isError, data } = useQuery({
+        queryKey: ['stat'],
+        queryFn: async () => {
             const res = await statService.getStat()
-            if (res) {
-                setData(
-                    [
-                        { name: "Total Devices", value: res.numberOfDevices, icon: IconDevices , link :'/device' },
-                        { name: "Total Tasks", value: res.numberOfTasks, icon: IconBook2 ,link :'/task'},
-                        { name: "Ongoing Tasks", value: res.numberOfOngoingTasks, icon: IconBook2 ,link :'/task'}
-                    ]
-                )
+            return res
+        },
+        onSuccess: (data) => {
+            data &&  setStat(
+                [
+                    { name: "Total Devices", value: data.numberOfDevices, icon: IconDevices , link :'/device' },
+                    { name: "Total Tasks", value: data.numberOfTasks, icon: IconBook2 ,link :'/task'},
+                    { name: "Ongoing Tasks", value: data.numberOfOngoingTasks, icon: IconBook2 ,link :'/task'}
+                ]
+            )
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
             }
-
-        }
-        catch (e) {
-            console.log(e)
-        }
-    }
-
-
-    useEffect(() => {
-        getStat()
-    }, [])
+            else {
+                showErorNotification("Unknown Error")
+            }
+        },
+    })
 
 
 
     return (
         <>
-            <StatsGridIcons data={data} />
+            <StatsGridIcons data={stat} />
         </>
     )
 }

@@ -112,9 +112,9 @@ function Nav() {
   // Same can be applied to Aside component with Aside.Section component
   return (
     <Navbar height='auto' p="xs" width={{
-      sm: 200,
-      lg: 250,
-      base: 100,
+      sm: 150,
+      lg: 175,
+      base: 1125,
     }}
     >
 

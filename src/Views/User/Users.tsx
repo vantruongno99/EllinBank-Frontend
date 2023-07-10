@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import userService from "../../Services/user.service"
-import { Anchor, Button, Group, Space, Loader } from '@mantine/core'
+import { Anchor, Button, Group, Space, Loader, Tooltip, ActionIcon } from '@mantine/core'
 import { UserInfo } from "../../Ultils/type"
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IconChevronUp, IconSelector } from '@tabler/icons-react';
@@ -8,6 +8,7 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { useQuery } from "@tanstack/react-query";
 import { showErorNotification } from "../../Ultils/notification";
+import { IconCirclePlus } from '@tabler/icons-react';
 
 
 
@@ -46,9 +47,17 @@ const Users = () => {
     return (
         <>
             <Group position="right">
-                <Button onClick={() => navigate(`${location.pathname}/new`)}>
-                    New User
-                </Button>
+                <Tooltip
+                    label="Create new User"
+                    color="blue"
+                    position="left"
+                >
+                    <ActionIcon color="blue" size="lg" radius="xl" variant="light" onClick={() => {
+                        navigate(`${location.pathname}/new`)
+                    }}>
+                        <IconCirclePlus />
+                    </ActionIcon >
+                </Tooltip>
             </Group>
             <Space h="xl" />
             <UserTable data={data} isLoading={isLoading} />
