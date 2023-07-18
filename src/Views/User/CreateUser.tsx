@@ -1,10 +1,12 @@
 import { useForm, isEmail, matchesField, isNotEmpty } from '@mantine/form';
 import { TextInput, Button, Box, Space, Input, PasswordInput, Select } from '@mantine/core';
-import userService from "../../Services/user.service";
 import { useError } from "../../Hook";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { showErorNotification } from "../../Ultils/notification";
+import { CompanyInfo } from '../../Ultils/type';
+import companyService from '../../Services/company.service';
+import userService from '../../Services/user.service';
 
 interface UserRe {
     confirmPassword: string,
@@ -31,11 +33,31 @@ const CreateUser = () => {
             confirmPassword: matchesField('password', 'Passwords are not the same'),
             email: isEmail('Invalid email'),
             role: isNotEmpty('Select role'),
-            company: isNotEmpty('Select role')
+            company: isNotEmpty('Select company')
 
 
         },
     });
+
+    const { isSuccess, data } = useQuery({
+        queryKey: ['company'],
+        initialData: [],
+        queryFn: async () => {
+            const res: CompanyInfo[] | undefined = await companyService.getAllCompany()
+            if (!res) {
+                throw new Error()
+            }
+            return res
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
+            }
+            else {
+                showErorNotification("Unknown Error")
+            }
+        },
+    })
 
 
     const createUser = useMutation({
@@ -57,6 +79,29 @@ const CreateUser = () => {
             }
         },
     })
+
+    if (!isSuccess) {
+        return <>404</>
+    }
+
+
+    const companyOption = data.map(a => ({
+        value: a.name,
+        label: a.name
+    })
+    )
+
+    const roleOption = [
+        {
+            value: "admin",
+            label: "Admin"
+        },
+        {
+            value: "user",
+            label: "User"
+        }
+    ]
+    
 
 
 
@@ -92,17 +137,15 @@ const CreateUser = () => {
                         mt="1rem"
                         label="Role :" placeholder="role"
                     >
-                        <Select data={[
-                            { value: 'admin', label: 'Admin' },
-                            { value: 'user', label: 'User' },
-                        ]}
+                        <Select data={roleOption}
                             {...form.getInputProps('role')} size="md" />
                     </Input.Wrapper>
                     <Input.Wrapper
                         mt="1rem"
                         label="Company :" placeholder="Company"
                     >
-                        <TextInput {...form.getInputProps('company')} />
+                        <Select data={companyOption}
+                            {...form.getInputProps('company')} size="md" />
                     </Input.Wrapper>
                     <Space h="md" />
                     <Button type="submit" mt="sm" disabled={createUser.isLoading}>

@@ -43,7 +43,8 @@ export type TaskInput = {
     startTime: Date,
     endTime: Date,
     name: string,
-    logPeriod: number
+    logPeriod: number,
+    company : string
 
 }
 
@@ -125,4 +126,17 @@ export interface Stat {
     numberOfDevices: number,
      numberOfTasks: number, 
      numberOfOngoingTasks: number
+}
+
+export interface CompanyInfo {
+    name : string,
+}
+
+export interface CompanyInfoExtended {
+    name : string,
+    Users : UserInfo[]
+}
+
+export interface CompanyInput {
+    name : string
 }

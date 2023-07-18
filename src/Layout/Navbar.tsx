@@ -81,7 +81,7 @@ function Nav() {
     
   ];
 
-  isAdmin && data.push({ link: 'user', label: 'Users', icon: IconUsers })
+  isAdmin && data.push({ link: 'user', label: 'Users', icon: IconUsers },{ link: 'company', label: 'Companies', icon: IconUsers })
 
 
   const location = useLocation();
@@ -112,9 +112,9 @@ function Nav() {
   // Same can be applied to Aside component with Aside.Section component
   return (
     <Navbar height='auto' p="xs" width={{
-      sm: 150,
-      lg: 175,
-      base: 1125,
+      sm: 175,
+      lg: 200,
+      base: 125,
     }}
     >
 

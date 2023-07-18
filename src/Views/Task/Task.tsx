@@ -20,7 +20,8 @@ const intialValue ={
     createUser: '',
     completeUser: null,
     status: '',
-    comment: ''
+    comment: '',
+    company : ''
 }
 
 const Task = () => {

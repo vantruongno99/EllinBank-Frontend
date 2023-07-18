@@ -136,19 +136,27 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
     })
 
     const openDeleteModal = () =>
-        modals.openConfirmModal({
+        modals.open({
             title: 'Delete this task',
             centered: true,
-            children: (
+            children: (<>
                 <p>
                     Are you sure you want to delete this task
 
                 </p>
-            ),
-            labels: { confirm: 'Delete task', cancel: "No don't delete it" },
-            confirmProps: { color: 'red' },
-            onConfirm: () => deleteTask.mutate(),
-        });
+                <Group position="right">
+                    <Button color="red" onClick={async () => {
+                        await deleteTask.mutateAsync()
+                        modals.closeAll()
+                    }
+                    } mt="md">
+                        Yes
+                    </Button>
+                </Group>
+
+            </>
+            )
+        })
 
 
 
@@ -213,6 +221,18 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
 
                 </Grid.Col>
                 <Grid.Col span={4}>
+                </Grid.Col>
+                <Grid.Col span={4}>
+                    <Box maw={440} >
+                        <Input.Wrapper
+                            label="Company :"
+                        >
+                            <Input  {...form.getInputProps('company')} size="md" disabled />
+                        </Input.Wrapper>
+                    </Box>
+
+                </Grid.Col>
+                <Grid.Col span={8}>
                 </Grid.Col>
                 <Grid.Col span={4}>
                     <Box maw={440} >

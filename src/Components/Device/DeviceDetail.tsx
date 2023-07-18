@@ -59,6 +59,7 @@ const DeviceDetail = ({ device }: { device: DeviceForm }) => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['device'] })
+            showSuccessNotification(`Device ${form.values.name} has been deleted`)
             navigate('/device')
 
         },
@@ -117,18 +118,26 @@ const DeviceDetail = ({ device }: { device: DeviceForm }) => {
 
 
     const openDeleteModal = () =>
-        modals.openConfirmModal({
+        modals.open({
             title: 'Delete this device',
             centered: true,
-            children: (
+            children: (<>
                 <p>
                     Are you sure you want to delete this device
 
                 </p>
-            ),
-            labels: { confirm: 'Delete device', cancel: "No don't delete it" },
-            confirmProps: { color: 'red' },
-            onConfirm: () => deleteDevice.mutate(),
+                <Group position="right">
+                    <Button color="red" onClick={async () => {
+                        await deleteDevice.mutateAsync()
+                        modals.closeAll()
+                    }
+                    } mt="md">
+                        Yes
+                    </Button>
+                </Group>
+
+            </>
+            )
         });
 
 
@@ -214,7 +223,7 @@ const DeviceDetail = ({ device }: { device: DeviceForm }) => {
 
                 </Grid.Col>
                 <Grid.Col span={4}>
-                <Box maw={440} >
+                    <Box maw={440} >
                         <Input.Wrapper
 
                             label="Last Check :"

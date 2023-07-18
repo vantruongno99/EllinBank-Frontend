@@ -140,14 +140,13 @@ const LogChart = ({ data, devices }: { data: Log[], devices: DeviceIdName[] }) =
     const input = Object.keys(data1).map((deviceId) => {
         return {
             type: "line",
-            name: devices.find(a => a.id = deviceId)?.name,
+            name: devices.find(a => a.id === deviceId)?.name,
             lineWidth: 1,
             data: data1[deviceId].map(a => ([
                 a.timestampUTC * 1000, a.logValue
             ])),
         }
     })
-
 
     const options = {
         chart: {

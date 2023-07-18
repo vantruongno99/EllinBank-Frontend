@@ -14,20 +14,27 @@ import { modals } from '@mantine/modals';
 const User = () => {
 
     const openDeleteModal = () =>
-        modals.openConfirmModal({
-            title: 'Delete this account',
-            centered: true,
-            children: (
-                <p>
-                    Are you sure you want to delete this account
+    modals.open({
+        title: 'Delete this user',
+        centered: true,
+        children: (<>
+            <p>
+                Are you sure you want to delete this user
 
-                </p>
-            ),
-            labels: { confirm: 'Delete account', cancel: "No don't delete it" },
-            confirmProps: { color: 'red' },
-            onConfirm: () => deleteUser.mutate(),
-        });
+            </p>
+            <Group position="right">
+                <Button color="red" onClick={async () => {
+                    await deleteUser.mutateAsync()
+                    modals.closeAll()
+                }
+                } mt="md">
+                    Yes
+                </Button>
+            </Group>
 
+        </>
+        )
+    })
 
     const navigate = useNavigate();
     const queryClient = useQueryClient()
@@ -57,6 +64,7 @@ const User = () => {
         },
         onSuccess: () => {
             navigate('/user')
+            showSuccessNotification(`User ${username} has been deleted`)
 
         },
         onError: (e) => {
@@ -136,7 +144,7 @@ const User = () => {
                             color="red"
                         >
                             <ActionIcon color="red" size="lg" radius="xs" variant="light" onClick={openDeleteModal}>
-                                <IconTrash />
+                                <IconTrash />R
                             </ActionIcon >
                         </Tooltip>
                     </Group>

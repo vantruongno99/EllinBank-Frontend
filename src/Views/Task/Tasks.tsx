@@ -133,8 +133,12 @@ const TaskTable = ({ data, isLoading }: { data: TaskInfo[], isLoading: boolean }
                     )
                 },
                 {
-                    accessor: 'createUser',
+                    accessor: 'company',
                     sortable: true,
+                    render: ({ company }) =>
+                    <Anchor href={`/company/${company}`} target="_blank">
+                        {company}
+                    </Anchor>
                 },
                 {
                     accessor: 'status',

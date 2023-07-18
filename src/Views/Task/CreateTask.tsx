@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react"
-import { useForm } from '@mantine/form';
-import { NumberInput, TextInput, Button, Box, Space, Grid, createStyles, Table, Checkbox, Group, rem, Title, Input } from '@mantine/core';
+import { useForm, isNotEmpty } from '@mantine/form';
+import { NumberInput, TextInput, Button, Box, Space, Grid, createStyles, Table, Checkbox, Group, rem, Title, Input, Select } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import taskService from "../../Services/task.service";
 import deviceService from "../../Services/device.service";
 import { useError } from "../../Hook";
 import { useNavigate } from "react-router-dom";
-import { TaskInfo, TaskInput } from "../../Ultils/type";
+import { CompanyInfo, TaskInfo, TaskInput } from "../../Ultils/type";
 import { DeviceInfo } from "../../Ultils/type";
 import { DataTable } from 'mantine-datatable';
 import { useQuery } from "@tanstack/react-query";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { showErorNotification } from "../../Ultils/notification";
+import companyService from "../../Services/company.service";
+import Cookies from "js-cookie";
+import userService from "../../Services/user.service";
 
 const CreateTask = () => {
     const [selection, setSelection] = useState<DeviceInfo[]>([]);
@@ -20,15 +23,19 @@ const CreateTask = () => {
     const queryClient = useQueryClient()
 
 
+
+
+
     const form = useForm({
         validateInputOnChange: true,
-        initialValues: { name: '', logPeriod: 1, startTime: new Date, endTime: new Date },
+        initialValues: { name: '', logPeriod: 1, startTime: new Date, endTime: new Date, company: "" },
         // functions will be used to validate values at corresponding key
         validate: {
             name: (value) => (value.length < 5 ? 'Name must have at least 5 letters' : null),
             logPeriod: (value) => (value < 0 ? 'You must be at least 18 to register' : null),
             startTime: (value) => (new Date(new Date(value).getTime() + 5 * 60 * 1000) < new Date ? "Date must be in future" : null),
             endTime: (value, values) => (new Date(value) < new Date(values.startTime) ? "End Date must greater than Start Date" : null),
+            company: isNotEmpty("Company is required")
         },
     });
 
@@ -79,6 +86,30 @@ const CreateTask = () => {
         navigate(`/task/${res.id}`)
     }
 
+    const userQuery = useQuery({
+        queryKey: ['profile'],
+        queryFn: async () => {
+            const res = await userService.getCurrentUser()
+            if (!res) {
+                throw new Error()
+            }
+            return res
+        },
+        onSuccess(data) {
+            if (data.role !== "admin") {
+                form.setFieldValue("company", data.company)
+            }
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
+            }
+            else {
+                showErorNotification("Unknown Error")
+            }
+        },
+    })
+
     const deviceQuery = useQuery({
         queryKey: ['device', 'available'],
         initialData: [],
@@ -99,6 +130,33 @@ const CreateTask = () => {
         },
     })
 
+    const companyQuery = useQuery({
+        queryKey: ['company'],
+        initialData: [],
+        queryFn: async () => {
+            const res: CompanyInfo[] | undefined = await companyService.getAllCompany()
+            if (!res) {
+                throw new Error()
+            }
+            return res
+        },
+        onError: (e) => {
+            if (e instanceof Error) {
+                showErorNotification(e.message)
+            }
+            else {
+                showErorNotification("Unknown Error")
+            }
+        },
+    })
+
+    const companyOption = companyQuery.data.map(a => ({
+        value: a.name,
+        label: a.name
+    })
+    )
+
+
     return (
         <>
             <Grid gutter="lg">
@@ -111,6 +169,15 @@ const CreateTask = () => {
                                 label="Name" placeholder="Name"
                             >
                                 <TextInput  {...form.getInputProps('name')} />
+                            </Input.Wrapper>
+
+                            <Space h="xs" />
+                            <Input.Wrapper
+                                label="Company :" placeholder="Company"
+                            >
+                                <Select data={companyOption}
+                                    disabled={userQuery?.data?.role !== "admin"}
+                                    {...form.getInputProps('company')} size="md" />
                             </Input.Wrapper>
                             <Space h="xs" />
 
