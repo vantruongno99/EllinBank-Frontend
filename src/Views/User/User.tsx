@@ -6,9 +6,10 @@ import moment from "moment"
 import { Space, Input, Box, Button, Select, PasswordInput, Tabs, Tooltip, Group, ActionIcon } from "@mantine/core"
 import { useForm } from '@mantine/form';
 import { IconTrash } from '@tabler/icons-react';
-import { showErorNotification, showSuccessNotification } from "../../Ultils/notification"
+import { showSuccessNotification } from "../../Ultils/notification"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { modals } from '@mantine/modals';
+import handleFunctionError from "../../Ultils/handleFunctionError";
 
 
 const User = () => {
@@ -68,12 +69,7 @@ const User = () => {
 
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -87,12 +83,7 @@ const User = () => {
             data && form.setValues(data)
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 

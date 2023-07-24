@@ -7,9 +7,10 @@ import { IconCircleCheck, IconPlayerPlay, IconPlayerPause, IconTrash } from '@ta
 import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { taskStatusColor } from "../../Ultils/colors"
-import { showErorNotification, showSuccessNotification } from "../../Ultils/notification"
+import { showSuccessNotification } from "../../Ultils/notification"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { modals } from '@mantine/modals';
+import handleFunctionError from "../../Ultils/handleFunctionError"
 
 const TaskDetail = ({ task }: { task: TaskForm }) => {
     const navigate = useNavigate();
@@ -50,12 +51,7 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
             showSuccessNotification(`Task ${form.values.name} has been updated`)
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -69,12 +65,7 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
             showSuccessNotification(`Task ${form.values.name} has been completed`)
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -89,12 +80,7 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
             navigate('/task')
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -107,12 +93,7 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
             showSuccessNotification(`Task ${form.values.name} has been resumed`)
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -126,12 +107,7 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
             showSuccessNotification(`Task ${form.values.name} has been paused`)
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 

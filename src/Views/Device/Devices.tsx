@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react"
 import deviceService from "../../Services/device.service"
 import { DeviceInfo } from "../../Ultils/type"
-import { ActionIcon, Anchor, Button, Group, Space, Text, Tooltip } from '@mantine/core'
+import { ActionIcon, Anchor, Button, Group, Space, Text, Tooltip, Title } from '@mantine/core'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { deviceStatusColor } from "../../Ultils/colors"
 import { IconChevronUp, IconSelector } from '@tabler/icons-react';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { useQuery } from "@tanstack/react-query";
-import { showErorNotification } from "../../Ultils/notification";
+import handleFunctionError from "../../Ultils/handleFunctionError";
 import { IconCirclePlus } from '@tabler/icons-react';
 
 
@@ -27,12 +27,7 @@ const Devices = () => {
             return res
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -40,14 +35,16 @@ const Devices = () => {
 
     return (
         <>
-            <Group position="right">
+
+            <Group position="apart">
+                <Title order={3} color="blue">DEVICE LIST</Title>
                 <Tooltip
                     label="Add new Device"
                     color="blue"
                     position="left"
                 >
                     <ActionIcon color="blue" size="lg" radius="xl" variant="light" onClick={() => {
-                       navigate(`${location.pathname}/new`)
+                        navigate(`${location.pathname}/new`)
                     }}>
                         <IconCirclePlus />
                     </ActionIcon >
@@ -74,64 +71,65 @@ const DeviceTable = ({ data, isLoading }: { data: DeviceInfo[], isLoading: boole
         setDevices(sortStatus.direction === 'desc' ? data.reverse() : data);
     }, [sortStatus]);
 
-    return (<>
-        <DataTable
-            minHeight={devices.length === 0 ? 150 : 0}
-            fetching={isLoading}
-            withBorder
-            borderRadius={5}
-            verticalAlignment="center"
-            fontSize="md"
-            sortStatus={sortStatus}
-            onSortStatusChange={setSortStatus}
-            sortIcons={{
-                sorted: <IconChevronUp size={14} />,
-                unsorted: <IconSelector size={14} />,
-            }}
-            columns={[
-                {
-                    accessor: 'id',
-                    title: 'Task No',
-                    sortable: true,
-                    render: ({ id }) =>
-                        <Anchor href={`${location.pathname}/${id}`} target="_blank">
-                            {id}
-                        </Anchor>
+    return (
+        <>
+            <DataTable
+                minHeight={devices.length === 0 ? 150 : 0}
+                fetching={isLoading}
+                withBorder
+                borderRadius={5}
+                verticalAlignment="center"
+                fontSize="md"
+                sortStatus={sortStatus}
+                onSortStatusChange={setSortStatus}
+                sortIcons={{
+                    sorted: <IconChevronUp size={14} />,
+                    unsorted: <IconSelector size={14} />,
+                }}
+                columns={[
+                    {
+                        accessor: 'id',
+                        title: 'Task No',
+                        sortable: true,
+                        render: ({ id }) =>
+                            <Anchor href={`${location.pathname}/${id}`} target="_blank">
+                                {id}
+                            </Anchor>
 
-                },
-                {
-                    accessor: 'name',
-                    title: 'Name',
-                    sortable: true,
+                    },
+                    {
+                        accessor: 'name',
+                        title: 'Name',
+                        sortable: true,
 
-                },
-                {
-                    accessor: 'CH4_SN',
-                    title: 'CH4_SN',
-                },
-                {
-                    accessor: 'CO2_SN',
-                    title: 'CO2_SN',
-                },
-                {
-                    accessor: 'O2_SN',
-                    title: 'O2_SN',
-                },
-                {
-                    accessor: 'PUMP_SN',
-                    title: 'PUMP_SN',
-                },
-                {
-                    accessor: 'Status',
-                    render: ({ status }) => (<Text color={deviceStatusColor(status)}>{status}</Text>),
-                    sortable: true,
+                    },
+                    {
+                        accessor: 'CH4_SN',
+                        title: 'CH4_SN',
+                    },
+                    {
+                        accessor: 'CO2_SN',
+                        title: 'CO2_SN',
+                    },
+                    {
+                        accessor: 'O2_SN',
+                        title: 'O2_SN',
+                    },
+                    {
+                        accessor: 'PUMP_SN',
+                        title: 'PUMP_SN',
+                    },
+                    {
+                        accessor: 'Status',
+                        render: ({ status }) => (<Text color={deviceStatusColor(status)}>{status}</Text>),
+                        sortable: true,
 
-                }
-            ]}
+                    }
+                ]}
 
-            records={devices}
-        />
-    </>)
+                records={devices}
+            />
+        </>)
 }
 
 

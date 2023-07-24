@@ -11,9 +11,8 @@ import { DeviceInfo } from "../../Ultils/type";
 import { DataTable } from 'mantine-datatable';
 import { useQuery } from "@tanstack/react-query";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { showErorNotification } from "../../Ultils/notification";
+import handleFunctionError from "../../Ultils/handleFunctionError";
 import companyService from "../../Services/company.service";
-import Cookies from "js-cookie";
 import userService from "../../Services/user.service";
 
 const CreateTask = () => {
@@ -49,12 +48,7 @@ const CreateTask = () => {
             return output
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -66,12 +60,7 @@ const CreateTask = () => {
             return await taskService.assignTask(input.taskId, input.deviceId)
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -101,12 +90,7 @@ const CreateTask = () => {
             }
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -121,12 +105,7 @@ const CreateTask = () => {
             return res
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -141,12 +120,7 @@ const CreateTask = () => {
             return res
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -161,7 +135,7 @@ const CreateTask = () => {
         <>
             <Grid gutter="lg">
                 <Grid.Col span={4}>
-                    <Title order={3}>Details</Title>
+                    <Title order={3}>DETAILs</Title>
                     <Space h="xl" />
                     <Box maw={320}>
                         <form onSubmit={form.onSubmit(newTask)}>
@@ -177,7 +151,7 @@ const CreateTask = () => {
                             >
                                 <Select data={companyOption}
                                     disabled={userQuery?.data?.role !== "admin"}
-                                    {...form.getInputProps('company')} size="md" />
+                                    {...form.getInputProps('company')}  />
                             </Input.Wrapper>
                             <Space h="xs" />
 

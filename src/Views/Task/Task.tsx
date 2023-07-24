@@ -5,7 +5,7 @@ import { DeviceInfo, TaskForm, TaskInfo } from "../../Ultils/type"
 import { Tabs } from "@mantine/core"
 import { TaskDetail, TaskDevices, TaskLog } from "../../Components/Task"
 import { useQuery } from "@tanstack/react-query"
-import { showErorNotification } from "../../Ultils/notification"
+import handleFunctionError from "../../Ultils/handleFunctionError";
 import { Loader } from '@mantine/core'
 
 
@@ -62,12 +62,7 @@ const Task = () => {
             setTask(task)
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 

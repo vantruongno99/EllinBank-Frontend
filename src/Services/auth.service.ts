@@ -40,7 +40,6 @@ const logout = async () => {
 
 const tokenAuth = async () => {
     try {
-        console.log(Cookies.get('token'))
         const res = await axios.get(`${baseUrl}`,
             {
                 headers: { Authorization: `bearer ${Cookies.get('token')}` }, // notice the Bearer before your token

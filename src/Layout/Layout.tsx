@@ -37,7 +37,7 @@ export default function AppShellDemo() {
             <CustomHeader />
       }
     >
-      <Box p={10}>
+      <Box p={20}>
         <Outlet />
       </Box>
     </AppShell>

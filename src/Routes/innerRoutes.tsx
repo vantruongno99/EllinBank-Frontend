@@ -15,6 +15,8 @@ const CreateUser = React.lazy(() => import("../Views/User/CreateUser"));
 const Companies =  React.lazy(() => import("../Views/Company/Companies"));
 const Company =  React.lazy(() => import("../Views/Company/Company"));
 const CreateCompany = React.lazy(() => import("../Views/Company/CreateCompany"));
+const Export = React.lazy(() => import("../Views/Export"));
+
 
 
 
@@ -33,6 +35,8 @@ const innerRoutes = [
     { path: '/company', element: <Companies /> },
     { path: '/company/:name', element: <Company /> },
     { path: '/company/new', element: <CreateCompany /> },
+    { path: '/export', element: <Export /> },
+
 
 
 ]

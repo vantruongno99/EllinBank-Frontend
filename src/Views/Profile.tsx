@@ -7,6 +7,8 @@ import authservice from "../Services/auth.service";
 import { useError } from "../Hook"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { showErorNotification, showSuccessNotification } from "../Ultils/notification";
+import handleFunctionError from "../Ultils/handleFunctionError";
+
 const Device = () => {
     const form = useForm<any>({
         initialValues: {
@@ -51,12 +53,7 @@ const Device = () => {
             form.setValues(data)
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -75,12 +72,7 @@ const Device = () => {
             showSuccessNotification(`Password has been changed`)
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 

@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import Cookies from 'js-cookie'
-import { EditTaskInput, Log, TaskInfo, TaskInput } from '../Ultils/type'
+import { EditTaskInput, GetLogOption, Log, TaskInfo, TaskInput } from '../Ultils/type'
 import { AxiosHandleResponse } from '../Ultils/middleware'
 import { domain } from '../Ultils/config'
 
@@ -190,26 +190,10 @@ const deleteTask = async (taskId: number): Promise<void> => {
     }
 }
 
-const getLogs = async (taskId: number): Promise<Log[]|undefined> => {
+const getLogs = async (taskId: number, option?: any): Promise<Log[] | undefined> => {
     try {
-        const res = await axios.get(`${baseUrl}/${taskId}/logs`,
-            config
-        )
-        return res.data
-    }
-    catch (error: any | AxiosError) {
-        if (axios.isAxiosError(error)) {
-            AxiosHandleResponse(error)
-        } else {
-            console.log(error)
-
-        }
-    }
-}
-
-const getLogsByType = async (taskId: number , type : string): Promise<Log[]|undefined> => {
-    try {
-        const res = await axios.get(`${baseUrl}/${taskId}/logs/${type}`,
+        const objString = option ? '?' + new URLSearchParams(option).toString() : "";
+        const res = await axios.get(`${baseUrl}/${taskId}/logs${objString}`,
             config
         )
         return res.data
@@ -235,8 +219,7 @@ const taskService = {
     updateTask,
     deleteTask,
     unassignTask,
-    getLogs,
-    getLogsByType
+    getLogs
 }
 
 export default taskService

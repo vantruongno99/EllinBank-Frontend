@@ -13,6 +13,7 @@ import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import Boost from 'highcharts/modules/boost';
 import { useQuery } from "@tanstack/react-query";
+import handleFunctionError from "../../Ultils/handleFunctionError";
 //@ts-ignore
 
 interface DeviceIdName {
@@ -43,12 +44,7 @@ const TaskLog = ({ task }: { task: TaskForm }) => {
             return list
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
         ...(checked && { refetchInterval: 5 * 60 * 1000 })
     })
@@ -58,7 +54,10 @@ const TaskLog = ({ task }: { task: TaskForm }) => {
     const { isLoading, data, isSuccess } = useQuery({
         queryKey: ['task', select],
         queryFn: async () => {
-            const res = await taskService.getLogsByType(task?.id, select as string)
+            const option = {
+                type : select as string
+            }
+            const res = await taskService.getLogs(task?.id, option)
             if (!res) {
                 throw new Error()
             }
@@ -69,12 +68,7 @@ const TaskLog = ({ task }: { task: TaskForm }) => {
         },
         enabled: !!select && !!devices,
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
         ...(checked && { refetchInterval: 5 * 60 * 1000 })
     })

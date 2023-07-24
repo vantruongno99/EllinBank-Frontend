@@ -3,7 +3,7 @@ import { TextInput, Button, Box, Space, Input, PasswordInput, Select } from '@ma
 import { useError } from "../../Hook";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { showErorNotification } from "../../Ultils/notification";
+import handleFunctionError from "../../Ultils/handleFunctionError";
 import { CompanyInfo } from '../../Ultils/type';
 import companyService from '../../Services/company.service';
 import userService from '../../Services/user.service';
@@ -50,12 +50,7 @@ const CreateUser = () => {
             return res
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -71,12 +66,7 @@ const CreateUser = () => {
 
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 

@@ -3,8 +3,8 @@ import { CalibrateSensorForm, DeviceForm } from "../../Ultils/type"
 import { Space, Input, Grid, Box, Title, Button, NumberInput, Select, Text, Paper } from "@mantine/core"
 import { useForm } from '@mantine/form';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { showErorNotification } from "../../Ultils/notification";
 import { Loader } from '@mantine/core';
+import handleFunctionError from "../../Ultils/handleFunctionError";
 
 const DeviceSensors = ({ device }: { device: DeviceForm }) => {
     const form2 = useForm<CalibrateSensorForm>({
@@ -35,12 +35,7 @@ const DeviceSensors = ({ device }: { device: DeviceForm }) => {
             return res
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -51,12 +46,7 @@ const DeviceSensors = ({ device }: { device: DeviceForm }) => {
             return res
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 

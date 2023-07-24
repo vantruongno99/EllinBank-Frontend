@@ -6,7 +6,7 @@ import { CompanyInput } from "../../Ultils/type";
 import { useError } from "../../Hook";
 import { useNavigate } from "react-router-dom";
 import { useMutation , useQueryClient } from "@tanstack/react-query";
-import { showErorNotification } from "../../Ultils/notification";
+import handleFunctionError from "../../Ultils/handleFunctionError";
 
 const CreateCompany = () => {
     const errorMessage = useError()
@@ -28,12 +28,7 @@ const CreateCompany = () => {
             navigate("/company")
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 

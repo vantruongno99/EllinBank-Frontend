@@ -48,9 +48,28 @@ const getAllCompany = async (): Promise<CompanyInfo[] | undefined> => {
     }
 }
 
-const getCompany = async (name : string): Promise<CompanyInfoExtended | undefined> => {
+const getCompany = async (name: string): Promise<CompanyInfoExtended | undefined> => {
     try {
         const res = await axios.get(`${baseUrl}/${name}`,
+            config
+        )
+
+        return res.data
+    }
+    catch (error: any | AxiosError) {
+        if (axios.isAxiosError(error)) {
+            throw AxiosHandleResponse(error)
+        } else {
+            console.log(error)
+
+        }
+    }
+}
+
+const getCompanyInfo = async (name: string, option?: any) => {
+    try {
+        const objString = '?' + new URLSearchParams(option).toString();
+        const res = await axios.get(`${baseUrl}/${name}/info${objString}`,
             config
         )
 
@@ -69,7 +88,8 @@ const getCompany = async (name : string): Promise<CompanyInfoExtended | undefine
 const companyService = {
     getAllCompany,
     getCompany,
-    createCompany
+    createCompany,
+    getCompanyInfo
 }
 
 export default companyService

@@ -7,7 +7,7 @@ import { deviceStatusColor } from "../../Ultils/colors"
 import { IconChevronUp, IconSelector } from '@tabler/icons-react';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { showErorNotification } from "../../Ultils/notification";
+import handleFunctionError from "../../Ultils/handleFunctionError"
 import sortBy from 'lodash/sortBy';
 
 
@@ -42,12 +42,7 @@ const TaskDevices = ({ devices, task }: { devices: DeviceInfo[], task: TaskForm 
             setSelection([])
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 

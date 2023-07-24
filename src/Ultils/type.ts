@@ -140,3 +140,8 @@ export interface CompanyInfoExtended {
 export interface CompanyInput {
     name : string
 }
+
+export interface GetLogOption {
+    type? : string,
+    devices? : string[]
+}

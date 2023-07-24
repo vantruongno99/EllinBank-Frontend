@@ -3,8 +3,7 @@ import {  IconDevices, IconBook2 } from '@tabler/icons-react';
 import statService from "../Services/stat.service";
 import { StatsGridIcons } from "../Components/Group";
 import { useQuery} from "@tanstack/react-query";
-import { showErorNotification } from "../Ultils/notification";
-
+import handleFunctionError from "../Ultils/handleFunctionError";
 interface StatDetail {
     name: string,
     value: number,
@@ -33,12 +32,7 @@ const Home = () => {
             )
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 

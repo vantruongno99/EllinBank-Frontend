@@ -5,8 +5,7 @@ import { IconChevronUp, IconSelector } from '@tabler/icons-react';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { useQuery } from "@tanstack/react-query";
-import { showErorNotification } from "../../Ultils/notification";
-import { IconCirclePlus } from '@tabler/icons-react';
+import handleFunctionError from "../../Ultils/handleFunctionError";
 import companyService from "../../Services/company.service";
 import { useNavigate, useParams } from "react-router-dom"
 import { useForm } from '@mantine/form';
@@ -30,12 +29,7 @@ const Company = () => {
 
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 

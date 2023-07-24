@@ -9,7 +9,7 @@ import { showSuccessNotification, showErorNotification } from "../../Ultils/noti
 import { useForm } from '@mantine/form';
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { modals } from '@mantine/modals';
-
+import handleFunctionError from "../../Ultils/handleFunctionError"
 const DeviceDetail = ({ device }: { device: DeviceForm }) => {
     const navigate = useNavigate();
     const queryClient = useQueryClient()
@@ -43,12 +43,7 @@ const DeviceDetail = ({ device }: { device: DeviceForm }) => {
             showSuccessNotification(`Device ${form.values.name} has been updated`)
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -64,12 +59,7 @@ const DeviceDetail = ({ device }: { device: DeviceForm }) => {
 
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -86,12 +76,7 @@ const DeviceDetail = ({ device }: { device: DeviceForm }) => {
 
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -107,12 +92,7 @@ const DeviceDetail = ({ device }: { device: DeviceForm }) => {
             showSuccessNotification(`Device ${form.values.name} has been resumed`)
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 

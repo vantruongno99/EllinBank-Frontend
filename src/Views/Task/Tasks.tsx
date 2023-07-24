@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import taskService from "../../Services/task.service";
 import { TaskInfo } from "../../Ultils/type"
-import { Anchor, Button, Group, Space, Tooltip, Text, Loader, ActionIcon } from '@mantine/core'
+import { Anchor, Button, Group, Space, Tooltip, Text, Loader, ActionIcon, Title } from '@mantine/core'
 import { useLocation, useNavigate } from 'react-router-dom';
 import moment from "moment";
 import {
@@ -12,7 +12,7 @@ import { IconChevronUp, IconSelector } from '@tabler/icons-react';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { useQuery } from "@tanstack/react-query";
-import { showErorNotification } from "../../Ultils/notification";
+import handleFunctionError from "../../Ultils/handleFunctionError";
 import { IconCirclePlus } from '@tabler/icons-react';
 
 
@@ -35,12 +35,7 @@ const Tasks = () => {
             return res
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
     if (isLoading) return <Loader />
@@ -48,7 +43,8 @@ const Tasks = () => {
     if (isError) return <>'An error has occurred: ' + {JSON.stringify(error)}</>
 
     return (
-        <> <Group position="right">
+        <> <Group position="apart">
+            <Title order={3} color="blue">TASK LIST</Title>
             <Tooltip
                 label="Create new Task"
                 color="blue"
@@ -136,9 +132,9 @@ const TaskTable = ({ data, isLoading }: { data: TaskInfo[], isLoading: boolean }
                     accessor: 'company',
                     sortable: true,
                     render: ({ company }) =>
-                    <Anchor href={`/company/${company}`} target="_blank">
-                        {company}
-                    </Anchor>
+                        <Anchor href={`/company/${company}`} target="_blank">
+                            {company}
+                        </Anchor>
                 },
                 {
                     accessor: 'status',

@@ -8,7 +8,7 @@ const Forbidden = React.lazy(() => import("../Views/Forbidden"))
 
 const outerRoutes = [
     { path: '/login', element: <Login /> },
-    { path: '/403', Element: <Forbidden /> },
+    { path: '/403', element: <Forbidden /> },
     { path: '*', element: <NotFound /> },
 ]
 

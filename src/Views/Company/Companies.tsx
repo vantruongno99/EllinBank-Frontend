@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react"
-import { Anchor, Button, Group, Space, Loader, Tooltip, ActionIcon } from '@mantine/core'
+import { Anchor, Group, Space, Loader, Tooltip, ActionIcon, Title } from '@mantine/core'
 import { CompanyInfo, UserInfo } from "../../Ultils/type"
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IconChevronUp, IconSelector } from '@tabler/icons-react';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { useQuery } from "@tanstack/react-query";
-import { showErorNotification } from "../../Ultils/notification";
 import { IconCirclePlus } from '@tabler/icons-react';
 import companyService from "../../Services/company.service";
-
+import handleFunctionError from "../../Ultils/handleFunctionError";
 
 
 
@@ -28,12 +27,7 @@ const Companies = () => {
             return res
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -46,7 +40,8 @@ const Companies = () => {
 
     return (
         <>
-             <Group position="right">
+            <Group position="apart">
+                <Title order={3} color="blue">COMPANY LIST</Title>
                 <Tooltip
                     label="Create new Company"
                     color="blue"

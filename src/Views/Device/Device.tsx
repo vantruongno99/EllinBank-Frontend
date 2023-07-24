@@ -7,7 +7,7 @@ import moment from "moment"
 import { DeviceDetail, DeviceTasks, DeviceSensors } from "../../Components/Device"
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from '@mantine/core';
-import { showErorNotification } from "../../Ultils/notification"
+import handleFunctionError from "../../Ultils/handleFunctionError";
 
 
 const Device = () => {
@@ -42,12 +42,7 @@ const Device = () => {
                  })
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 

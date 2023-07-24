@@ -3,7 +3,8 @@ import {
   IconUsers,
   IconHome,
   IconDevices,
-  IconBook2
+  IconBook2,
+  IconDatabaseExport
 } from '@tabler/icons-react';
 import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';
@@ -78,10 +79,12 @@ function Nav() {
     { link: '', label: "Home", icon: IconHome, },
     { link: 'device', label: 'Devices', icon: IconDevices },
     { link: 'task', label: 'Tasks', icon: IconBook2 },
-    
   ];
 
-  isAdmin && data.push({ link: 'user', label: 'Users', icon: IconUsers },{ link: 'company', label: 'Companies', icon: IconUsers })
+  isAdmin && data.push({ link: 'user', label: 'Users', icon: IconUsers }, { link: 'company', label: 'Companies', icon: IconUsers })
+
+  data.push({ link: 'export', label: 'Export', icon: IconDatabaseExport },
+  )
 
 
   const location = useLocation();

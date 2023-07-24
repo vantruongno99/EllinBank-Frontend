@@ -9,7 +9,7 @@ import sortBy from 'lodash/sortBy';
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { showErorNotification } from "../../Ultils/notification";
 import taskService from "../../Services/task.service";
-
+import handleFunctionError from "../../Ultils/handleFunctionError";
 const TaskDevicesAssign = ({ task }: { task: TaskForm }) => {
     const [table, setTable] = useState<DeviceInfo[]>([])
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'name', direction: 'asc' });
@@ -40,12 +40,7 @@ const TaskDevicesAssign = ({ task }: { task: TaskForm }) => {
             setOpened(false)
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
@@ -64,12 +59,7 @@ const TaskDevicesAssign = ({ task }: { task: TaskForm }) => {
             setTable(data)
         },
         onError: (e) => {
-            if (e instanceof Error) {
-                showErorNotification(e.message)
-            }
-            else {
-                showErorNotification("Unknown Error")
-            }
+            handleFunctionError(e)
         },
     })
 
