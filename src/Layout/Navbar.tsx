@@ -4,7 +4,8 @@ import {
   IconHome,
   IconDevices,
   IconBook2,
-  IconDatabaseExport
+  IconDatabaseExport,
+  IconBrandCoinbase
 } from '@tabler/icons-react';
 import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';
@@ -81,7 +82,7 @@ function Nav() {
     { link: 'task', label: 'Tasks', icon: IconBook2 },
   ];
 
-  isAdmin && data.push({ link: 'user', label: 'Users', icon: IconUsers }, { link: 'company', label: 'Companies', icon: IconUsers })
+  isAdmin && data.push({ link: 'user', label: 'Users', icon: IconUsers }, { link: 'company', label: 'Companies', icon: IconBrandCoinbase })
 
   data.push({ link: 'export', label: 'Export', icon: IconDatabaseExport },
   )
@@ -108,6 +109,9 @@ function Nav() {
     if (location.pathname != "/") {
       const a = location.pathname.split('/')[1]
       setActive(a)
+    }
+    else{
+      setActive('')
     }
   },
     [])

@@ -89,6 +89,17 @@ export interface ChangePasswordInput {
     newPassword : string
 }
 
+export interface AdminResetPasswordInput {
+    username : string,
+    newPassword : string
+}
+
+export interface AdminResetPasswordForm {
+    username : string,
+    newPassword : string,
+    repeatPassword : string
+}
+
 export interface ChangePasswordForm {
     password : string , 
     newPassword : string,
