@@ -10,7 +10,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import handleFunctionError from "../Ultils/handleFunctionError";
 import { DateTimePicker } from "@mantine/dates";
 import { CSVLink } from "react-csv";
-import { Parser } from '@json2csv/plainjs';
 import moment from "moment";
 import {
     IconBuilding, IconChevronRight, IconUser, IconUsers
@@ -111,7 +110,8 @@ const Export = () => {
         },
         onError: (e) => {
             handleFunctionError(e)
-        }
+        },
+        enabled: !!exportForm.values.company
     })
 
     const companyOption = companyQuery.data.map(a => ({
@@ -186,7 +186,7 @@ const Export = () => {
                 </Box>
                 <Space h="xl" />
                 <Button onClick={() => saveData.mutateAsync()} disabled={saveData.isLoading} mt="sm">
-                    Submit  {saveData.isLoading && <>&nbsp; <Loader size="sm"/> </>}
+                    Submit  {saveData.isLoading && <>&nbsp; <Loader size="sm" /> </>}
                 </Button>
             </form >
         </>
@@ -209,6 +209,10 @@ const TaskTable = ({ data, isLoading, setInput }: { data: TaskInfo[], isLoading:
         setSelection(data)
         setInput(data)
     }
+
+    useEffect(()=>{
+        setTasks(data)
+    },[data])
 
     const handleDeviceSelection = (task: TaskInfo, devices: DeviceInfo[]) => {
         const selected = {
@@ -277,7 +281,6 @@ const TaskTable = ({ data, isLoading, setInput }: { data: TaskInfo[], isLoading:
                     },
                 }}
             />
-
         </>
 
 
