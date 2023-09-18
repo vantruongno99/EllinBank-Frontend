@@ -1,11 +1,11 @@
 import React from "react"
 import { useForm } from '@mantine/form';
-import { NumberInput, TextInput, Button, Box, Space , Input } from '@mantine/core';
+import { NumberInput, TextInput, Button, Box, Space, Input, Title } from '@mantine/core';
 import deviceService from "../../Services/device.service";
 import { DeviceInput } from "../../Ultils/type";
 import { useError } from "../../Hook";
 import { useNavigate } from "react-router-dom";
-import { useMutation , useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import handleFunctionError from "../../Ultils/handleFunctionError";
 
 const CreateDevice = () => {
@@ -36,20 +36,22 @@ const CreateDevice = () => {
 
     return (
         <>
+            <Title color="blue" order={3}>DETAILS</Title>
+            <Space h="xl" />
             <Box maw={320}>
                 <form onSubmit={form.onSubmit(data => createDevice.mutate(data))}>
                     <Input.Wrapper
-                        
+
                         label="ID :" placeholder="ID"
                     >
                         <TextInput  {...form.getInputProps('id')} />
                     </Input.Wrapper>
                     <Space h="xs" />
                     <Input.Wrapper
-                        
+
                         label="Name :" placeholder="Name"
                     >
-                    <TextInput {...form.getInputProps('name')} />
+                        <TextInput {...form.getInputProps('name')} />
                     </Input.Wrapper>
 
                     <Space h="md" />

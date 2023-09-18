@@ -1,12 +1,11 @@
-import { useEffect } from "react"
 import userService from "../Services/user.service";
 import { useForm, matchesField } from '@mantine/form';
 import { Space, Input, Box, Button, Text, PasswordInput, Tabs, Select, Loader } from "@mantine/core"
 import { ChangePasswordForm } from "../Ultils/type";
 import authservice from "../Services/auth.service";
 import { useError } from "../Hook"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { showErorNotification, showSuccessNotification } from "../Ultils/notification";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import {showSuccessNotification } from "../Ultils/notification";
 import handleFunctionError from "../Ultils/handleFunctionError";
 
 const Device = () => {

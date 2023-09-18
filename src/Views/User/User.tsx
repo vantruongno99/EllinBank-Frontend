@@ -110,7 +110,7 @@ const User = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['user', username] })
-            showSuccessNotification(`Task ${detailForm.values.username} has been updated`)
+            showSuccessNotification(`User ${detailForm.values.username} has been updated`)
         },
         onError: (e) => {
             handleFunctionError(e)

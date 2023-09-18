@@ -36,20 +36,7 @@ const Devices = () => {
     return (
         <>
 
-            <Group position="apart">
-                <Title order={3} color="blue">DEVICE LIST</Title>
-                <Tooltip
-                    label="Add new Device"
-                    color="blue"
-                    position="left"
-                >
-                    <ActionIcon color="blue" size="lg" radius="xl" variant="light" onClick={() => {
-                        navigate(`${location.pathname}/new`)
-                    }}>
-                        <IconCirclePlus />
-                    </ActionIcon >
-                </Tooltip>
-            </Group>
+            <Title order={3} color="blue">DEVICE LIST</Title>
             <Space h="xl" />
             <DeviceTable data={data} isLoading={isLoading} />
 
@@ -57,19 +44,36 @@ const Devices = () => {
     )
 }
 
+
+const PAGE_SIZE = 20;
+
+
 const DeviceTable = ({ data, isLoading }: { data: DeviceInfo[], isLoading: boolean }) => {
     const [devices, setDevices] = useState<DeviceInfo[]>(data)
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'name', direction: 'asc' });
+    const [page, setPage] = useState(1);
+    const [records, setRecords] = useState(devices.slice(0, PAGE_SIZE));
 
     useEffect(() => {
         setDevices(data)
+        setRecords(data.slice(0, PAGE_SIZE))
     }, [data])
 
 
     useEffect(() => {
         const data = sortBy(devices, sortStatus.columnAccessor) as DeviceInfo[];
         setDevices(sortStatus.direction === 'desc' ? data.reverse() : data);
+        setRecords(data.slice(0, PAGE_SIZE))
+        setPage(1)
     }, [sortStatus]);
+
+    useEffect(() => {
+        const from = (page - 1) * PAGE_SIZE;
+        const to = from + PAGE_SIZE;
+        setRecords(devices.slice(from, to));
+    }, [page]);
+
+
 
     return (
         <>
@@ -86,10 +90,15 @@ const DeviceTable = ({ data, isLoading }: { data: DeviceInfo[], isLoading: boole
                     sorted: <IconChevronUp size={14} />,
                     unsorted: <IconSelector size={14} />,
                 }}
+                totalRecords={devices.length}
+                recordsPerPage={PAGE_SIZE}
+                page={page}
+                onPageChange={(p) => setPage(p)}
+                records={records}
                 columns={[
                     {
                         accessor: 'id',
-                        title: 'Task No',
+                        title: 'Id',
                         sortable: true,
                         render: ({ id }) =>
                             <Anchor href={`${location.pathname}/${id}`} target="_blank">
@@ -126,10 +135,9 @@ const DeviceTable = ({ data, isLoading }: { data: DeviceInfo[], isLoading: boole
 
                     }
                 ]}
-
-                records={devices}
             />
-        </>)
+        </>
+    )
 }
 
 

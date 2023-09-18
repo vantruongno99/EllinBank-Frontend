@@ -60,26 +60,41 @@ const Companies = () => {
     )
 }
 
+const PAGE_SIZE = 20;
+
+
 const CompanyTable = ({ data, isLoading }: { data: CompanyInfo[], isLoading: boolean }) => {
 
-    const [company, setCompany] = useState<CompanyInfo[]>(data)
+    const [companies, setCompanies] = useState<CompanyInfo[]>(data)
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'name', direction: 'asc' });
+    const [page, setPage] = useState(1);
+    const [records, setRecords] = useState(companies.slice(0, PAGE_SIZE));
 
     useEffect(() => {
-        setCompany(data)
+        setCompanies(data)
+        setRecords(data.slice(0, PAGE_SIZE))
     }, [data])
 
 
     useEffect(() => {
-        const data = sortBy(company, sortStatus.columnAccessor) as CompanyInfo[];
-        setCompany(sortStatus.direction === 'desc' ? data.reverse() : data);
-    }, [sortStatus]);
+        const data = sortBy(companies, sortStatus.columnAccessor) as CompanyInfo[];
+        setCompanies(sortStatus.direction === 'desc' ? data.reverse() : data);
+        setRecords(companies.slice(0, PAGE_SIZE));
+        setPage(1)
+    }, [sortStatus,companies]);
+
+
+    useEffect(() => {
+        const from = (page - 1) * PAGE_SIZE;
+        const to = from + PAGE_SIZE;
+        setRecords(companies.slice(from, to));
+    }, [page, companies]);
 
 
     return (
         <>
             <DataTable
-                minHeight={company.length === 0 ? 150 : 0}
+                minHeight={companies.length === 0 ? 150 : 0}
                 fetching={isLoading}
                 withBorder
                 borderRadius={5}
@@ -91,6 +106,11 @@ const CompanyTable = ({ data, isLoading }: { data: CompanyInfo[], isLoading: boo
                     sorted: <IconChevronUp size={14} />,
                     unsorted: <IconSelector size={14} />,
                 }}
+                records={records}
+                totalRecords={companies.length}
+                recordsPerPage={PAGE_SIZE}
+                page={page}
+                onPageChange={(p) => setPage(p)}
                 columns={[
                     {
                         accessor: 'name',
@@ -104,7 +124,6 @@ const CompanyTable = ({ data, isLoading }: { data: CompanyInfo[], isLoading: boo
                     },
                 ]}
 
-                records={company}
             />
         </>
     )

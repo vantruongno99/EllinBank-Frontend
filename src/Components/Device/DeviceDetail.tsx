@@ -5,7 +5,7 @@ import { DeviceForm } from "../../Ultils/type"
 import { Space, Input, Grid, Box, Title, Button, Group, ActionIcon, Tooltip, Text, Menu, Badge } from "@mantine/core"
 import { IconPlayerPlay, IconPlayerPause, IconTrash } from '@tabler/icons-react';
 import { deviceStatusColor } from "../../Ultils/colors"
-import { showSuccessNotification, showErorNotification } from "../../Ultils/notification"
+import { showSuccessNotification } from "../../Ultils/notification"
 import { useForm } from '@mantine/form';
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { modals } from '@mantine/modals';

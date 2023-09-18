@@ -7,7 +7,6 @@ import { IconChevronUp, IconSelector } from '@tabler/icons-react';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { showErorNotification } from "../../Ultils/notification";
 import taskService from "../../Services/task.service";
 import handleFunctionError from "../../Ultils/handleFunctionError";
 const TaskDevicesAssign = ({ task }: { task: TaskForm }) => {

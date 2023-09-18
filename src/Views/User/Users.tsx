@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import userService from "../../Services/user.service"
-import { Anchor, Button, Group, Space, Loader, Tooltip, ActionIcon ,Title} from '@mantine/core'
+import { Anchor, Button, Group, Space, Loader, Tooltip, ActionIcon, Title } from '@mantine/core'
 import { UserInfo } from "../../Ultils/type"
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IconChevronUp, IconSelector } from '@tabler/icons-react';
@@ -42,7 +42,7 @@ const Users = () => {
     return (
         <>
             <Group position="apart">
-            <Title order={3} color="blue">USER LIST</Title>
+                <Title order={3} color="blue">USER LIST</Title>
                 <Tooltip
                     label="Create new User"
                     color="blue"
@@ -61,20 +61,34 @@ const Users = () => {
     )
 }
 
+
+const PAGE_SIZE = 20;
+
 const UserTable = ({ data, isLoading }: { data: UserInfo[], isLoading: boolean }) => {
 
     const [users, setUsers] = useState<UserInfo[]>(data)
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'name', direction: 'asc' });
+    const [page, setPage] = useState(1);
+    const [records, setRecords] = useState(users.slice(0, PAGE_SIZE));
 
     useEffect(() => {
         setUsers(data)
+        setRecords(data.slice(0, PAGE_SIZE))
     }, [data])
 
 
     useEffect(() => {
         const data = sortBy(users, sortStatus.columnAccessor) as UserInfo[];
         setUsers(sortStatus.direction === 'desc' ? data.reverse() : data);
-    }, [sortStatus]);
+        setRecords(users.slice(0, PAGE_SIZE));
+        setPage(1)
+    }, [sortStatus, users]);
+
+    useEffect(() => {
+        const from = (page - 1) * PAGE_SIZE;
+        const to = from + PAGE_SIZE;
+        setRecords(users.slice(from, to));
+    }, [page, users]);
 
 
     return (
@@ -92,6 +106,11 @@ const UserTable = ({ data, isLoading }: { data: UserInfo[], isLoading: boolean }
                     sorted: <IconChevronUp size={14} />,
                     unsorted: <IconSelector size={14} />,
                 }}
+                records={records}
+                totalRecords={users.length}
+                recordsPerPage={PAGE_SIZE}
+                page={page}
+                onPageChange={(p) => setPage(p)}
                 columns={[
                     {
                         accessor: 'username',
@@ -122,10 +141,9 @@ const UserTable = ({ data, isLoading }: { data: UserInfo[], isLoading: boolean }
                         sortable: true,
 
                     },
-                   
+
                 ]}
 
-                records={users}
             />
         </>
     )

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
-    createStyles, Header, Autocomplete, Group, Burger, rem,
-    Container,
+    createStyles, Header, Group, rem,
     Avatar,
     UnstyledButton,
     Menu,
@@ -11,7 +10,6 @@ import {
     IconLogout, IconAddressBook
 } from '@tabler/icons-react';
 import authservice from '../Services/auth.service';
-import Cookies from 'js-cookie';
 
 
 const useStyles = createStyles((theme) => ({

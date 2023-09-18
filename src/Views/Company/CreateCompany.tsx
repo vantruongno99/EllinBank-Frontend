@@ -1,11 +1,11 @@
 import React from "react"
-import { useForm ,isNotEmpty} from '@mantine/form';
-import { NumberInput, TextInput, Button, Box, Space , Input } from '@mantine/core';
+import { useForm, isNotEmpty } from '@mantine/form';
+import { NumberInput, TextInput, Button, Box, Space, Input, Title } from '@mantine/core';
 import companyService from "../../Services/company.service";
 import { CompanyInput } from "../../Ultils/type";
 import { useError } from "../../Hook";
 import { useNavigate } from "react-router-dom";
-import { useMutation , useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import handleFunctionError from "../../Ultils/handleFunctionError";
 
 const CreateCompany = () => {
@@ -35,13 +35,15 @@ const CreateCompany = () => {
 
     return (
         <>
+            <Title color="blue" order={3}>DETAILS</Title>
+            <Space h="xl" />
             <Box maw={320}>
                 <form onSubmit={form.onSubmit(data => createCompany.mutate(data))}>
                     <Input.Wrapper
-                        
+
                         label="Name :" placeholder="Name"
                     >
-                    <TextInput {...form.getInputProps('name')} />
+                        <TextInput {...form.getInputProps('name')} />
                     </Input.Wrapper>
 
                     <Space h="md" />

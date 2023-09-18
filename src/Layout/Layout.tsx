@@ -11,6 +11,7 @@ import {
   Box
 } from '@mantine/core';
 import Nav from './Navbar';
+import { NavbarNested } from './NavbarNested';
 import CustomHeader from './Header';
 import { Outlet } from 'react-router-dom';
 
@@ -26,7 +27,7 @@ export default function AppShellDemo() {
       navbarOffsetBreakpoint="sm"
       asideOffsetBreakpoint="sm"
       navbar={
-        <Nav />
+        <NavbarNested />
       }
       footer={
         <Footer height={60} p="md">

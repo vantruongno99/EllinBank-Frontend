@@ -135,7 +135,7 @@ const CreateTask = () => {
         <>
             <Grid gutter="lg">
                 <Grid.Col span={4}>
-                    <Title order={3}>DETAILs</Title>
+                <Title color="blue" order={3}>DETAILS</Title>
                     <Space h="xl" />
                     <Box maw={320}>
                         <form onSubmit={form.onSubmit(newTask)}>
@@ -183,7 +183,7 @@ const CreateTask = () => {
 
                             <Space h="md" />
                             <Button type="submit" disabled={Object.keys(form.errors).length !== 0 || createTask.isLoading} mt="sm">
-                                Submit
+                                Save
                             </Button>
                             <Space h="md" />
 
@@ -196,7 +196,7 @@ const CreateTask = () => {
 
                 <Grid.Col span={7}>
                     <Box maw={400}>
-                        <Title order={3}>Available Sensors</Title>
+                        <Title color="blue" order={3}>AVAILABLE SENSORS</Title>
                         <Space h="xl" />
                         <Space h="lg" />
                         <DataTable

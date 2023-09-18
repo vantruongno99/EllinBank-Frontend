@@ -1,5 +1,5 @@
 import { useForm, isEmail, matchesField, isNotEmpty } from '@mantine/form';
-import { TextInput, Button, Box, Space, Input, PasswordInput, Select } from '@mantine/core';
+import { TextInput, Button, Box, Space, Input, PasswordInput, Select, Title } from '@mantine/core';
 import { useError } from "../../Hook";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -29,7 +29,7 @@ const CreateUser = () => {
         // functions will be used to validate values at corresponding key
         validate: {
             username: (value) => (value.length < 5 ? 'Name must have at least 5 letters' : null),
-            password: (value) => (value.length < 8 ? 'Password must have at least 5 letters' : null),
+            password: (value) => (value.length < 8 ? 'Password must have at least 8 letters' : null),
             confirmPassword: matchesField('password', 'Passwords are not the same'),
             email: isEmail('Invalid email'),
             role: isNotEmpty('Select role'),
@@ -91,13 +91,15 @@ const CreateUser = () => {
             label: "User"
         }
     ]
-    
+
 
 
 
 
     return (
         <>
+            <Title color="blue" order={3}>DETAILS</Title>
+            <Space h="xl" />
             <Box maw={320}>
                 <form onSubmit={form.onSubmit(data => createUser.mutate(data))}>
                     <Input.Wrapper

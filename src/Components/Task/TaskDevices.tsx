@@ -79,7 +79,7 @@ const TaskDevices = ({ devices, task }: { devices: DeviceInfo[], task: TaskForm 
                 columns={[
                     {
                         accessor: 'id',
-                        title: 'Device No',
+                        title: 'Id',
                         sortable: true,
                         render: ({ id }) =>
                             <Anchor href={`/device/${id}`} target="_blank">

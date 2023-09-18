@@ -4,21 +4,17 @@ import companyService from "../Services/company.service";
 import { useForm, matchesField, isNotEmpty } from '@mantine/form';
 import { Space, Input, Box, Button, Text, PasswordInput, Tooltip, Loader, Select, Grid, Title, Anchor, Group, Stack, createStyles } from "@mantine/core"
 import { ChangePasswordForm, CompanyInfo, DeviceInfo, Log, TaskInfo } from "../Ultils/type";
-import authservice from "../Services/auth.service";
-import { useError } from "../Hook"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import handleFunctionError from "../Ultils/handleFunctionError";
 import { DateTimePicker } from "@mantine/dates";
-import { CSVLink } from "react-csv";
-import moment from "moment";
-import {
-    IconBuilding, IconChevronRight, IconUser, IconUsers
-} from '@tabler/icons-react';
 import { IconChevronUp, IconSelector } from '@tabler/icons-react';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { taskStatusColor } from "../Ultils/colors";
 import taskService from "../Services/task.service";
+import { Parser } from '@json2csv/plainjs';
+import JSZip from "jszip";
+import { saveAs } from 'file-saver';
 
 
 
@@ -26,6 +22,11 @@ interface submitOption {
     from: Date | null,
     to: Date | null,
     company: string
+}
+
+interface DataOutput {
+    Task: TaskInfo,
+    Log: Log[]
 }
 
 const Export = () => {
@@ -42,15 +43,24 @@ const Export = () => {
         },
     });
 
-    const download = async (data: any) => {
+    const handleDownload = async (data: DataOutput[]) => {
         try {
-            const fileData = JSON.stringify(data);
-            const blob = new Blob([fileData], { type: "text/plain" });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.download = "company-info.json";
-            link.href = url;
-            link.click();
+            let zip = new JSZip
+            for (const d of data) {
+                // Ignore the task without registerd devices 
+                if (d.Log.length !== 0) {
+                    const opts = {};
+                    const parser = new Parser(opts);
+                    const csv = parser.parse(d.Log);
+                    const blob = new Blob([csv], { type: "text/plain" });
+                    zip.file(`${d.Task.id}-${d.Task.name}.csv`, blob);
+                }
+            }
+
+            zip.generateAsync({ type: "blob" })
+                .then((content) => {
+                    saveAs(content, `${exportForm.values.company}.zip`);
+                });
         }
         catch (e) {
             handleFunctionError(e)
@@ -120,10 +130,7 @@ const Export = () => {
     })
     )
 
-    interface DataOutput {
-        Task: TaskInfo,
-        Log: Log[]
-    }
+
 
 
     const saveData = useMutation({
@@ -141,7 +148,7 @@ const Export = () => {
             return output
         },
         onSuccess: (data) => {
-            download(data)
+            handleDownload(data)
         }
         ,
         onError: (e) => {
@@ -198,7 +205,7 @@ const Export = () => {
 const TaskTable = ({ data, isLoading, setInput }: { data: TaskInfo[], isLoading: boolean, setInput: React.Dispatch<React.SetStateAction<TaskInfo[]>> }) => {
     const [tasks, setTasks] = useState<TaskInfo[]>(data)
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'desc' });
-    const [selection, setSelection] = useState<TaskInfo[]>(data);
+    const [selection, setSelection] = useState<TaskInfo[]>([]);
 
     useEffect(() => {
         const data = sortBy(tasks, sortStatus.columnAccessor) as TaskInfo[];
@@ -210,9 +217,9 @@ const TaskTable = ({ data, isLoading, setInput }: { data: TaskInfo[], isLoading:
         setInput(data)
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         setTasks(data)
-    },[data])
+    }, [data])
 
     const handleDeviceSelection = (task: TaskInfo, devices: DeviceInfo[]) => {
         const selected = {
@@ -235,6 +242,7 @@ const TaskTable = ({ data, isLoading, setInput }: { data: TaskInfo[], isLoading:
             <Space h="xl" />
             <Space h="xl" />
             <DataTable
+                isRecordSelectable={(record) => record.Device.length > 0}
                 minHeight={tasks.length === 0 ? 150 : 0}
                 withBorder
                 borderRadius={5}

@@ -13,16 +13,11 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { useQuery } from "@tanstack/react-query";
 import handleFunctionError from "../../Ultils/handleFunctionError";
-import { IconCirclePlus } from '@tabler/icons-react';
 
 
 
 
 const Tasks = () => {
-
-    const navigate = useNavigate()
-    const location = useLocation();
-
 
     const { isLoading, error, isError, data } = useQuery({
         queryKey: ['task'],
@@ -43,20 +38,8 @@ const Tasks = () => {
     if (isError) return <>'An error has occurred: ' + {JSON.stringify(error)}</>
 
     return (
-        <> <Group position="apart">
+        <>
             <Title order={3} color="blue">TASK LIST</Title>
-            <Tooltip
-                label="Create new Task"
-                color="blue"
-                position="left"
-            >
-                <ActionIcon color="blue" size="lg" radius="xl" variant="light" onClick={() => {
-                    navigate(`${location.pathname}/new`)
-                }}>
-                    <IconCirclePlus />
-                </ActionIcon >
-            </Tooltip>
-        </Group>
             <Space h="xl" />
             <TaskTable data={data} isLoading={isLoading} />
 
@@ -64,18 +47,33 @@ const Tasks = () => {
     )
 }
 
+const PAGE_SIZE = 20;
+
+
 const TaskTable = ({ data, isLoading }: { data: TaskInfo[], isLoading: boolean }) => {
     const [tasks, setTasks] = useState<TaskInfo[]>(data)
-    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'name', direction: 'asc' });
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
+    const [page, setPage] = useState(1);
+    const [records, setRecords] = useState(tasks.slice(0, PAGE_SIZE));
 
     useEffect(() => {
         setTasks(data)
+        setRecords(data.slice(0, PAGE_SIZE))
     }, [data])
 
     useEffect(() => {
         const data = sortBy(tasks, sortStatus.columnAccessor) as TaskInfo[];
         setTasks(sortStatus.direction === 'desc' ? data.reverse() : data);
-    }, [sortStatus]);
+        setRecords(tasks.slice(0, PAGE_SIZE));
+        setPage(1)
+    }, [sortStatus, tasks]);
+
+    useEffect(() => {
+        const from = (page - 1) * PAGE_SIZE;
+        const to = from + PAGE_SIZE;
+        setRecords(tasks.slice(from, to));
+    }, [page, tasks]);
+
 
 
     return (<>
@@ -92,6 +90,11 @@ const TaskTable = ({ data, isLoading }: { data: TaskInfo[], isLoading: boolean }
                 sorted: <IconChevronUp size={14} />,
                 unsorted: <IconSelector size={14} />,
             }}
+            records={records}
+            totalRecords={tasks.length}
+            recordsPerPage={PAGE_SIZE}
+            page={page}
+            onPageChange={(p) => setPage(p)}
             columns={[
                 {
                     accessor: 'id',
@@ -121,10 +124,10 @@ const TaskTable = ({ data, isLoading }: { data: TaskInfo[], isLoading: boolean }
                 {
                     accessor: 'endTime',
                     sortable: true,
-                    render: ({ endTime }) => (
+                    render: ({ endTime, status }) => (
                         <Group position="left">
                             {moment(endTime).format('DD/MM/yyyy HH:mm')}
-                            {(new Date(endTime) < new Date()) && <Tooltip label="Delayed" color="orange"><IconAlertTriangle color="orange" /></Tooltip>}
+                            {status !== "COMPLETED" && (new Date(endTime) < new Date()) && <Tooltip label="Delayed" color="orange"><IconAlertTriangle color="orange" /></Tooltip>}
                         </Group>
                     )
                 },
@@ -143,7 +146,6 @@ const TaskTable = ({ data, isLoading }: { data: TaskInfo[], isLoading: boolean }
                 }
             ]}
 
-            records={tasks}
         />
     </>)
 }

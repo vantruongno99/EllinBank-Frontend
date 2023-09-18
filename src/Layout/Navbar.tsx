@@ -82,6 +82,8 @@ function Nav() {
     { link: 'task', label: 'Tasks', icon: IconBook2 },
   ];
 
+
+
   isAdmin && data.push({ link: 'user', label: 'Users', icon: IconUsers }, { link: 'company', label: 'Companies', icon: IconBrandCoinbase })
 
   data.push({ link: 'export', label: 'Export', icon: IconDatabaseExport },
@@ -118,9 +120,9 @@ function Nav() {
 
   // Same can be applied to Aside component with Aside.Section component
   return (
-    <Navbar height='auto' p="xs" width={{
-      sm: 175,
-      lg: 200,
+    <Navbar height='auto' p='lg' width={{
+      sm: 200,
+      lg: 250,
       base: 125,
     }}
     >

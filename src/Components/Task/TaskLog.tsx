@@ -1,13 +1,13 @@
 import { useEffect, useState, useRef } from "react";
 import { TaskForm } from "../../Ultils/type"
-import { showErorNotification } from "../../Ultils/notification";
 import taskService from "../../Services/task.service";
 import deviceService from "../../Services/device.service";
-import { Box, Checkbox, Space, Select, Loader, Group, Tooltip, ActionIcon } from "@mantine/core";
+import { Box, Checkbox, Space, Select, Loader, Group, Tooltip, ActionIcon, Autocomplete } from "@mantine/core";
 import { Log } from "../../Ultils/type";
 import { CSVLink, CSVDownload } from "react-csv";
 import {
-    IconFileDownload
+    IconFileDownload,
+    IconDownload
 } from '@tabler/icons-react';
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
@@ -30,7 +30,22 @@ const TaskLog = ({ task }: { task: TaskForm }) => {
     const [select, setSelect] = useState<string | null>(null);
 
 
-    const { data: devices ,isSuccess : isSuccessDevices} = useQuery({
+
+    const selectData = [
+        { value: 'test', label: 'Test' },
+        { value: 'CO2', label: 'CO2' },
+        { value: 'CH4', label: 'CH4' },
+        { value: 'O2', label: 'O2' },
+        { value: 'BAR', label: 'BAR' },
+        { value: 'RH', label: 'RH' },
+        { value: 'TEMP', label: 'TEMP' },
+
+
+    ]
+
+
+
+    const { data: devices, isSuccess: isSuccessDevices } = useQuery({
         queryKey: ['device'],
         queryFn: async () => {
             const res = await deviceService.getAllDevices()
@@ -38,24 +53,29 @@ const TaskLog = ({ task }: { task: TaskForm }) => {
                 throw new Error()
             }
             const list = res.map(a => ({
-               id :  a.id,
-                name : a.name
+                id: a.id,
+                name: a.name
             }))
+
             return list
         },
         onError: (e) => {
             handleFunctionError(e)
         },
-        ...(checked && { refetchInterval: 5 * 60 * 1000 })
     })
 
 
 
     const { isLoading, data, isSuccess } = useQuery({
-        queryKey: ['task', select],
+        queryKey: ['task', select , checked],
         queryFn: async () => {
             const option = {
-                type : select as string
+                type: select as string,
+                ...checked && {
+                    from : Date.now() - 1000 * 60 * 15
+                }
+                
+
             }
             const res = await taskService.getLogs(task?.id, option)
             if (!res) {
@@ -66,13 +86,16 @@ const TaskLog = ({ task }: { task: TaskForm }) => {
             }
             return res
         },
-        enabled: !!select && !!devices,
+        enabled: !!select && !!devices && !!selectData.some(a => a.value === select),
         onError: (e) => {
             handleFunctionError(e)
         },
-        ...(checked && { refetchInterval: 5 * 60 * 1000 })
+        ...(checked &&
+             { 
+                refetchInterval: 1000 * 30, 
+                refetchIntervalInBackground : true,
+            })
     })
-
 
 
     return (
@@ -81,21 +104,23 @@ const TaskLog = ({ task }: { task: TaskForm }) => {
             <Group position="apart" spacing="xs" mx="1rem">
                 <Box maw={300} >
                     <Select
-                        label="Select a type"
+                        label="Select data type"
                         placeholder="Pick one"
-                        value={select} onChange={setSelect}
-                        data={[
-                            { value: 'test', label: 'Test' },
-                            { value: 'CO2', label: 'CO2' },
-                            { value: 'CH4', label: 'CH4' },
-                            { value: 'O2', label: 'O2' },
-                        ]}
+                        value={select}
+                        onChange={setSelect}
+                        data={selectData}
+                        limit={7}
+                        searchable
                     />
-                    <Space h="sm" />
-                    {task?.status !== "COMPLETED" && <Checkbox
-                        checked={checked} onChange={(event) => setChecked(event.currentTarget.checked)}
-                        label="Auto Refresh"
-                    />}
+                    <Space h="lg" />
+                    {task?.status !== "COMPLETED" &&
+                        <Checkbox
+                            mb={"1rem"}
+                            checked={checked} onChange={(event) => setChecked(event.currentTarget.checked)}
+                            label="Live Chart"
+                            disabled={!select}
+                        />
+                    }
                 </Box>
 
                 {isSuccess && data.length > 0 &&
@@ -104,8 +129,8 @@ const TaskLog = ({ task }: { task: TaskForm }) => {
                         filename={`${task?.id}-${select}.csv`}
                     >
                         <Tooltip label="Download as CSV">
-                            <ActionIcon color="blue" size="xl" radius="lg" variant="filled">
-                                <IconFileDownload
+                            <ActionIcon color="blue" size="xl" radius="lg" variant='light'>
+                                <IconDownload
                                     size="2rem"
                                     strokeWidth={1}
                                 />
@@ -137,7 +162,7 @@ const LogChart = ({ data, devices }: { data: Log[], devices: DeviceIdName[] }) =
             name: devices.find(a => a.id === deviceId)?.name,
             lineWidth: 1,
             data: data1[deviceId].map(a => ([
-                a.timestampUTC * 1000, a.logValue
+                a.timestampUTC, a.logValue
             ])),
         }
     })
@@ -183,7 +208,7 @@ const LogChart = ({ data, devices }: { data: Log[], devices: DeviceIdName[] }) =
         xAxis: {
             type: 'datetime',
             title: {
-                text: 'Date time'
+                text: 'Timestamp'
             }
         },
         credits: {
