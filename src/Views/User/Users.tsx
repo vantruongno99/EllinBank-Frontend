@@ -80,15 +80,15 @@ const UserTable = ({ data, isLoading }: { data: UserInfo[], isLoading: boolean }
     useEffect(() => {
         const data = sortBy(users, sortStatus.columnAccessor) as UserInfo[];
         setUsers(sortStatus.direction === 'desc' ? data.reverse() : data);
-        setRecords(users.slice(0, PAGE_SIZE));
+        setRecords(data.slice(0, PAGE_SIZE))
         setPage(1)
-    }, [sortStatus, users]);
+    }, [sortStatus]);
 
     useEffect(() => {
         const from = (page - 1) * PAGE_SIZE;
         const to = from + PAGE_SIZE;
         setRecords(users.slice(from, to));
-    }, [page, users]);
+    }, [page]);
 
 
     return (

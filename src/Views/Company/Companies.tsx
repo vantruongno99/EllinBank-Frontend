@@ -79,16 +79,15 @@ const CompanyTable = ({ data, isLoading }: { data: CompanyInfo[], isLoading: boo
     useEffect(() => {
         const data = sortBy(companies, sortStatus.columnAccessor) as CompanyInfo[];
         setCompanies(sortStatus.direction === 'desc' ? data.reverse() : data);
-        setRecords(companies.slice(0, PAGE_SIZE));
+        setRecords(companies.slice(0, PAGE_SIZE))
         setPage(1)
-    }, [sortStatus,companies]);
-
+    }, [sortStatus]);
 
     useEffect(() => {
         const from = (page - 1) * PAGE_SIZE;
         const to = from + PAGE_SIZE;
         setRecords(companies.slice(from, to));
-    }, [page, companies]);
+    }, [page]);
 
 
     return (

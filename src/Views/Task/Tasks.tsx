@@ -61,18 +61,19 @@ const TaskTable = ({ data, isLoading }: { data: TaskInfo[], isLoading: boolean }
         setRecords(data.slice(0, PAGE_SIZE))
     }, [data])
 
+
     useEffect(() => {
         const data = sortBy(tasks, sortStatus.columnAccessor) as TaskInfo[];
         setTasks(sortStatus.direction === 'desc' ? data.reverse() : data);
-        setRecords(tasks.slice(0, PAGE_SIZE));
+        setRecords(data.slice(0, PAGE_SIZE))
         setPage(1)
-    }, [sortStatus, tasks]);
+    }, [sortStatus]);
 
     useEffect(() => {
         const from = (page - 1) * PAGE_SIZE;
         const to = from + PAGE_SIZE;
         setRecords(tasks.slice(from, to));
-    }, [page, tasks]);
+    }, [page]);
 
 
 
