@@ -154,14 +154,14 @@ const LogChart = ({ data, devices }: { data: Log[], devices: DeviceIdName[] }) =
             return groups;
         }, {} as Record<K, T[]>);
 
-    const data1 = groupBy(data, i => i.deviceId)
+    const data1 = groupBy(data, i => i.deviceName)
 
-    const input = Object.keys(data1).map((deviceId) => {
+    const input = Object.keys(data1).map((deviceName) => {
         return {
             type: "line",
-            name: devices.find(a => a.id === deviceId)?.name,
+            name: deviceName,
             lineWidth: 1,
-            data: data1[deviceId].map(a => ([
+            data: data1[deviceName].map(a => ([
                 a.timestampUTC, a.logValue
             ])),
         }

@@ -107,14 +107,15 @@ export interface ChangePasswordForm {
 }
 
 export interface Log {
-    id: number,
     dateTimeUTC: Date,
     timestampUTC: number,
     deviceId: string,
     taskId: number,
     logType: string,
     logValue: number,
-    logNote: string
+    logNote: string,
+    deviceName : string,
+    taskName : string
 }
 
 export interface UserInfo {

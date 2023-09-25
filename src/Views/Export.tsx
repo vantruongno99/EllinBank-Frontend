@@ -31,6 +31,7 @@ interface DataOutput {
 
 const Export = () => {
     const [input, setInput] = useState<TaskInfo[]>([])
+    const [data, setData] = useState<TaskInfo[]>([])
 
     const exportForm = useForm({
         validateInputOnChange: true,
@@ -117,6 +118,7 @@ const Export = () => {
         },
         onSuccess(data) {
             setInput(data.Tasks)
+            setData(data.Tasks)
         },
         onError: (e) => {
             handleFunctionError(e)
@@ -137,8 +139,13 @@ const Export = () => {
         mutationFn: async () => {
             const output: DataOutput[] = []
             for (const task of input) {
-                const deviceList = JSON.stringify(task.Device.map(a => a.Device.id))
-                const log = await taskService.getLogs(task.id, { deviceList })
+                let option : {deviceList? : string} = {}
+                const allDevices = data.find(a => a.id === task.id)?.Device.map(a => a.Device.id) 
+                const selectedDevices = task.Device.map(a => a.Device.id)
+                if(allDevices && allDevices?.length !== selectedDevices.length){
+                        option.deviceList = JSON.stringify(selectedDevices)
+                }
+                const log = await taskService.getLogs(task.id, option)
                 output.push({
                     Task: task,
                     Log: log ? log : []
