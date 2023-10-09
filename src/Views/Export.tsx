@@ -161,6 +161,7 @@ const Export = () => {
         onError: (e) => {
             handleFunctionError(e)
         },
+        retry: false
     })
 
 
