@@ -67,14 +67,14 @@ const TaskLog = ({ task }: { task: TaskForm }) => {
 
 
     const { isLoading, data, isSuccess } = useQuery({
-        queryKey: ['task', select , checked],
+        queryKey: ['task', select, checked],
         queryFn: async () => {
             const option = {
                 type: select as string,
                 ...checked && {
-                    from : Date.now() - 1000 * 60 * 15
+                    from: Date.now() - 1000 * 60 * 15
                 }
-                
+
 
             }
             const res = await taskService.getLogs(task?.id, option)
@@ -92,10 +92,12 @@ const TaskLog = ({ task }: { task: TaskForm }) => {
             handleFunctionError(e)
         },
         ...(checked &&
-             { 
-                refetchInterval: 1000 * 30, 
-                refetchIntervalInBackground : true,
-            })
+        {
+            refetchInterval: 1000 * 30,
+            refetchIntervalInBackground: true,
+        })
+        ,
+        retry: false
     })
 
 
