@@ -111,6 +111,11 @@ const DeviceTable = ({ data, isLoading }: { data: DeviceInfo[], isLoading: boole
                         title: 'Name',
                         sortable: true,
 
+                        render: ({ id, name }) =>
+                            <Anchor href={`${location.pathname}/${id}`} target="_blank">
+                                {name}
+                            </Anchor>
+
                     },
                     {
                         accessor: 'CH4_SN',

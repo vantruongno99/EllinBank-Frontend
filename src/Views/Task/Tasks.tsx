@@ -111,6 +111,11 @@ const TaskTable = ({ data, isLoading }: { data: TaskInfo[], isLoading: boolean }
                     accessor: 'name',
                     title: 'Name',
                     sortable: true,
+                    render: ({ id , name }) =>
+                    <Anchor href={`${location.pathname}/${id}`} target="_blank">
+                        {name}
+                    </Anchor>
+
 
                 },
                 {

@@ -1,5 +1,6 @@
 import React from "react";
 
+// route does not require auth
 
 const Login = React.lazy(() => import("../Views/Login"));
 const NotFound = React.lazy(() => import("../Views/NotFound"))

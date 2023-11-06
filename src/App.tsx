@@ -16,6 +16,9 @@ import { ModalsProvider } from '@mantine/modals';
 export default function App() {
 
 
+
+
+  // check if token from cookie is still valid
   const isAuthenticated = async () => {
     try {
       await authservice.tokenAuth()
@@ -27,6 +30,9 @@ export default function App() {
 
   }
 
+
+
+  // from above , if unvalid delete cookie and the redirect
   const loader = async () => {
     const valid = await isAuthenticated()
     if (!valid) {
@@ -37,6 +43,9 @@ export default function App() {
   };
 
 
+
+  // outerRoutes does not require cookie (token)
+  // innterRoute does
   const routes = [...outerRoutes, {
     path: "/", element: <Layout />,
     loader: loader,

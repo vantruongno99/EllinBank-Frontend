@@ -84,6 +84,7 @@ const TaskLog = ({ task }: { task: TaskForm }) => {
             if (res.length === 0) {
                 throw new Error("No data recorded")
             }
+            console.log(res)
             return res
         },
         enabled: !!select && !!devices && !!selectData.some(a => a.value === select),

@@ -1,5 +1,7 @@
 import React from "react";
 
+// route does require auth
+
 
 const Home = React.lazy(() => import("../Views/Home"));
 const Tasks = React.lazy(() => import("../Views/Task/Tasks"));
