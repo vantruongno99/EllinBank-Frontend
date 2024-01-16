@@ -2,7 +2,7 @@ import { MantineProvider } from '@mantine/core';
 import { Layout } from './Layout';
 import React, { Suspense } from 'react'
 import { createBrowserRouter, RouterProvider, redirect } from "react-router-dom";
-import { innerRoutes, outerRoutes } from './Routes';
+import { innerRoutes,outerRoutes } from './Routes';
 import { Notifications } from '@mantine/notifications';
 import { Loader } from '@mantine/core';
 import authservice from './Services/auth.service';

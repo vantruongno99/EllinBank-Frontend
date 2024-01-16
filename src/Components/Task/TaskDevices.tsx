@@ -65,6 +65,7 @@ const TaskDevices = ({ devices, task }: { devices: DeviceInfo[], task: TaskForm 
             <Space h="xl" />
 
             <DataTable
+                            height={600}
                 minHeight={table.length === 0 ? 150 : 0}
                 verticalAlignment="center"
                 withBorder

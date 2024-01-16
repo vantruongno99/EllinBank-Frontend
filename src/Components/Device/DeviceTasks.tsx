@@ -26,6 +26,7 @@ const DeviceTasks = ({ tasks }: { tasks: TaskInfo[] }) => {
     return (<>
         <Box p={20} >
             <DataTable
+                height={600}
                 minHeight={table.length === 0 ? 150 : 0}
                 withBorder
                 borderRadius={5}

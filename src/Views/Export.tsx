@@ -139,11 +139,11 @@ const Export = () => {
         mutationFn: async () => {
             const output: DataOutput[] = []
             for (const task of input) {
-                let option : {deviceList? : string} = {}
-                const allDevices = data.find(a => a.id === task.id)?.Device.map(a => a.Device.id) 
+                let option: { deviceList?: string } = {}
+                const allDevices = data.find(a => a.id === task.id)?.Device.map(a => a.Device.id)
                 const selectedDevices = task.Device.map(a => a.Device.id)
-                if(allDevices && allDevices?.length !== selectedDevices.length){
-                        option.deviceList = JSON.stringify(selectedDevices)
+                if (allDevices && allDevices?.length !== selectedDevices.length) {
+                    option.deviceList = JSON.stringify(selectedDevices)
                 }
                 const log = await taskService.getLogs(task.id, option)
                 output.push({
@@ -250,6 +250,7 @@ const TaskTable = ({ data, isLoading, setInput }: { data: TaskInfo[], isLoading:
             <Space h="xl" />
             <Space h="xl" />
             <DataTable
+                height={600}
                 isRecordSelectable={(record) => record.Device.length > 0}
                 minHeight={tasks.length === 0 ? 150 : 0}
                 withBorder

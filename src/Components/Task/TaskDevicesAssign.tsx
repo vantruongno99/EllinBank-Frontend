@@ -77,12 +77,13 @@ const TaskDevicesAssign = ({ task }: { task: TaskForm }) => {
                 </ActionIcon >
             </Tooltip>
 
-            <Modal title="Avaialable Sensors" opened={opened} onClose={() => setOpened(false)} withCloseButton={false} centered>
+            <Modal title="Available Sensors" opened={opened} onClose={() => setOpened(false)} withCloseButton={false} centered>
                 {table.length !== 0 ? <DataTable
+                    height={600}
                     minHeight={table.length === 0 ? 150 : 0}
                     verticalAlignment="center"
-                    selectedRecords={ selection}
-                    onSelectedRecordsChange={ setSelection}
+                    selectedRecords={selection}
+                    onSelectedRecordsChange={setSelection}
                     withBorder
                     borderRadius={5}
                     sortStatus={sortStatus}

@@ -135,7 +135,7 @@ const CreateTask = () => {
         <>
             <Grid gutter="lg">
                 <Grid.Col span={4}>
-                <Title color="blue" order={3}>DETAILS</Title>
+                    <Title color="blue" order={3}>DETAILS</Title>
                     <Space h="xl" />
                     <Box maw={320}>
                         <form onSubmit={form.onSubmit(newTask)}>
@@ -151,7 +151,7 @@ const CreateTask = () => {
                             >
                                 <Select data={companyOption}
                                     disabled={userQuery?.data?.role !== "admin"}
-                                    {...form.getInputProps('company')}  />
+                                    {...form.getInputProps('company')} />
                             </Input.Wrapper>
                             <Space h="xs" />
 
@@ -200,6 +200,7 @@ const CreateTask = () => {
                         <Space h="xl" />
                         <Space h="lg" />
                         <DataTable
+                            height={600}
                             minHeight={deviceQuery.data.length === 0 ? 150 : 0}
                             verticalAlignment="center"
                             withBorder
