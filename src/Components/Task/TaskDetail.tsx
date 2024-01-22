@@ -20,14 +20,15 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
             initialValues: task,
             validate: {
                 name: (value) => (value.length < 5 ? 'Name must have at least 5 letters' : null),
-                logPeriod: (value) => (value < 0 ? 'You must be at least 18 to register' : null),
+                logPeriod: (value) => (value < 0 ? 'value must be more than 0' : null),
+                flowRate: (value) => (value < 0 ? 'value must be more than 0' : null),
                 endTime: (value, values) => (new Date(value) < new Date(values.startTime) ? "End Date must greater than Start Date" : null),
             },
         }
     );
 
     useEffect(() => {
-        if (task) form.setValues(task)
+        if (task) form.setValues({ ...task, flowRate: Number(task.flowRate) })
     }, [task])
 
     if (!task) {
@@ -42,7 +43,8 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
                 id: data.id,
                 name: data.name,
                 logPeriod: data.logPeriod,
-                comment: data.comment
+                comment: data.comment,
+                flowRate: data.flowRate
             }
             return await taskService.updateTask(input)
         },
@@ -297,6 +299,7 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
                             id="PUMP_SN"
                             label="Completed At :"                        >
                             <DateTimePicker
+                                placeholder={""}
                                 {...form.getInputProps('completedUTC')}
                                 disabled
                                 size="md"
@@ -323,7 +326,7 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
             </Grid>
             <Space h="xl" />
             <Space h="xl" />
-            <Title order={3} color="blue">PROFILE</Title>
+            <Title order={3} color="blue">CONFIG</Title>
             <Space h="xl" />
 
             <Grid gutter='md' >
@@ -343,8 +346,27 @@ const TaskDetail = ({ task }: { task: TaskForm }) => {
                         </Input.Wrapper>
                     </Box>
                 </Grid.Col>
+                <Grid.Col span={4}>
+                    <Box maw={440} >
+                        <Input.Wrapper
+                            label="Flow rate :"
+                        >
+                            <NumberInput
+                                size="md"
+                                {...form.getInputProps("flowRate")}
+                                precision={1}
+                                min={0}
+                                step={0.5}
+                                max={4}
+                                disabled={form.values.status === "COMPLETED"}
+                            />
+                        </Input.Wrapper>
+                    </Box>
+                </Grid.Col>
 
             </Grid>
+
+
             <Space h="xl" />
             <Space h="xl" />
             <Title order={3} color="blue">COMMENT</Title>

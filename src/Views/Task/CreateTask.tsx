@@ -27,14 +27,15 @@ const CreateTask = () => {
 
     const form = useForm({
         validateInputOnChange: true,
-        initialValues: { name: '', logPeriod: 1, startTime: new Date, endTime: new Date, company: "" },
+        initialValues: { name: '', logPeriod: 1, startTime: new Date, endTime: new Date, company: "", flowRate: 0 },
         // functions will be used to validate values at corresponding key
         validate: {
             name: (value) => (value.length < 5 ? 'Name must have at least 5 letters' : null),
-            logPeriod: (value) => (value < 0 ? 'You must be at least 18 to register' : null),
+            logPeriod: (value) => (value < 0 ? 'value must be more than 0' : null),
             startTime: (value) => (new Date(new Date(value).getTime() + 5 * 60 * 1000) < new Date ? "Date must be in future" : null),
             endTime: (value, values) => (new Date(value) < new Date(values.startTime) ? "End Date must greater than Start Date" : null),
-            company: isNotEmpty("Company is required")
+            company: isNotEmpty("Company is required"),
+            flowRate: (value) => (value < 0 ? 'value must be more than 0' : null),
         },
     });
 
@@ -140,14 +141,14 @@ const CreateTask = () => {
                     <Box maw={320}>
                         <form onSubmit={form.onSubmit(newTask)}>
                             <Input.Wrapper
-                                label="Name" placeholder="Name"
+                                label="Name"
                             >
                                 <TextInput  {...form.getInputProps('name')} />
                             </Input.Wrapper>
 
                             <Space h="xs" />
                             <Input.Wrapper
-                                label="Company :" placeholder="Company"
+                                label="Company :" 
                             >
                                 <Select data={companyOption}
                                     disabled={userQuery?.data?.role !== "admin"}
@@ -157,11 +158,24 @@ const CreateTask = () => {
 
                             <Input.Wrapper
                                 label="Log Period :"
-                                placeholder="Log Period">
+                                >
                                 <NumberInput
                                     min={0}
                                     max={30}
                                     {...form.getInputProps('logPeriod')}
+                                />
+                            </Input.Wrapper>
+                            <Space h="xs" />
+
+                            <Input.Wrapper
+                                label="Flow rate :"
+                                >
+                                <NumberInput                             
+                                    precision={1}
+                                    min={0}
+                                    step={0.5}
+                                    max={4}
+                                    {...form.getInputProps('flowRate')}
                                 />
                             </Input.Wrapper>
                             <Space h="xs" />

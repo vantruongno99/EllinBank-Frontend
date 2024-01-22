@@ -37,6 +37,7 @@ export interface EditTaskInput  {
     name: string,
     logPeriod: number,
     comment : string,
+    flowRate : number
 }
 
 export type TaskInput = {
@@ -44,7 +45,8 @@ export type TaskInput = {
     endTime: Date,
     name: string,
     logPeriod: number,
-    company : string
+    company : string,
+    flowRate : number
 
 }
 
