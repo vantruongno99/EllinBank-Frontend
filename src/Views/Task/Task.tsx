@@ -21,7 +21,8 @@ const intialValue ={
     completeUser: null,
     status: '',
     comment: '',
-    company : ''
+    company : '',
+    flowRate : 0
 }
 
 const Task = () => {

@@ -33,14 +33,14 @@ const TaskLog = ({ task }: { task: TaskForm }) => {
 
     const selectData = [
         { value: 'test', label: 'Test' },
-        { value: 'CO2', label: 'CO2' },
+        { value: 'CO2_FILTER', label: 'CO2_FILTER' },
+        { value: 'CO2_UNFILTER', label: 'CO2_UNFILTER' },
         { value: 'CH4', label: 'CH4' },
-        { value: 'O2', label: 'O2' },
-        { value: 'BAR', label: 'BAR' },
-        { value: 'RH', label: 'RH' },
-        { value: 'TEMP', label: 'TEMP' },
-
-
+        { value: 'O2_PPM', label: 'O2_PPM' },
+        { value: 'O2_PERCENT', label: 'O2_PERCENT' },
+        { value: 'HUMIDITY', label: 'HUMIDITY' },
+        { value: 'TEMPERATURE', label: 'TEMPERATURE' },
+        { value: 'PRESSURE', label: 'PRESSURE' },
     ]
 
 

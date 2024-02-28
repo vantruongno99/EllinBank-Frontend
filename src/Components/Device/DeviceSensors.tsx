@@ -64,12 +64,15 @@ const DeviceSensors = ({ device }: { device: DeviceForm }) => {
                             label="Sensor Type:"
                         >
                             <Select data={[
-                                { value: 'CO2', label: 'CO2' },
+                                { value: 'test', label: 'Test' },
+                                { value: 'CO2_FILTER', label: 'CO2_FILTER' },
+                                { value: 'CO2_UNFILTER', label: 'CO2_UNFILTER' },
                                 { value: 'CH4', label: 'CH4' },
-                                { value: 'O2', label: 'O2' },
-                                { value: 'TEMP', label: 'TEMP' },
-                                { value: 'RH', label: 'RH' },
-                                { value: 'BAR', label: 'BAR' },
+                                { value: 'O2_PPM', label: 'O2_PPM' },
+                                { value: 'O2_PERCENT', label: 'O2_PERCENT' },
+                                { value: 'HUMIDITY', label: 'HUMIDITY' },
+                                { value: 'TEMPERATURE', label: 'TEMPERATURE' },
+                                { value: 'PRESSURE', label: 'PRESSURE' },
                             ]}
                                 {...form3.getInputProps('sensorType')} size="md" />
                         </Input.Wrapper>
